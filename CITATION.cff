@@ -9,10 +9,12 @@ abstract: >-
   reproduced, not deployed.
 type: software
 version: "0.1.0"
+date-released: "2026-09-14"
+repository-code: "https://github.com/halvrenofviryel/claim-preservation-profile"
+url: "https://github.com/halvrenofviryel/claim-preservation-profile"
 license:
   - CC-BY-4.0
   - Apache-2.0
-license-url: "https://creativecommons.org/licenses/by/4.0/legalcode"
 keywords:
   - claim preservation
   - evidence contract

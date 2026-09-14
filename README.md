@@ -64,7 +64,7 @@ downstream transformation — which is what this profile proposes.
 | --- | --- |
 | [`spec/v0.1/CLAIM_PRESERVATION_PROFILE.md`](spec/v0.1/CLAIM_PRESERVATION_PROFILE.md) | The profile: claim model, relation vocabulary, twenty normative requirements (CPP-1 … CPP-20), observer/probe-effect extension. |
 | [`spec/v0.1/claim-preservation-result.schema.json`](spec/v0.1/claim-preservation-result.schema.json) | Machine-readable result schema. Keeps dimensions separate; blocks passing relations that carry violations. |
-| [`spec/v0.1/CHECKSUMS.sha256`](spec/v0.1/CHECKSUMS.sha256) | Local candidate integrity manifest for the two files above. |
+| [`spec/v0.1/CHECKSUMS.sha256`](spec/v0.1/CHECKSUMS.sha256) | v0.1.0 integrity manifest for the two normative files above. |
 | [`conformance/negative-fixtures.json`](conformance/negative-fixtures.json) | The original 20 negative cases plus two hardening cases for CPP-16 and CPP-19. Four loose requirement attributions in the original set are corrected without changing their expected relations. |
 | [`conformance/positive-fixtures.json`](conformance/positive-fixtures.json) | 15 positive controls. Thirteen are paired with a negative case and name the fact the pairing turns on; the validator separates ten of those pairs mechanically, and the other three say plainly that it cannot. |
 | [`conformance/fixture.schema.json`](conformance/fixture.schema.json) | Common fixture schema, with backwards-compatible aliases for the seed corpus's field names. |
@@ -215,7 +215,7 @@ The corpus now exercises **CPP-16** (observation/intervention separation) and
 near-neighbour pairs and load-bearing validator checks. This demonstrates internal
 mechanical discrimination only, not independent validation or deployment fitness.
 Four loose requirement attributions in the original negative set are corrected in
-this hardening branch; the expected relation of every case remains unchanged. The
+the v0.1.0 release; the expected relation of every case remains unchanged. The
 correction record is in
 [`research/PRIOR_ART_AND_SCOPE.md`](research/PRIOR_ART_AND_SCOPE.md#6-corrections-to-original-negative-fixture-attributions).
 
@@ -225,7 +225,7 @@ correction record is in
 # 1. dependencies (JSON Schema validation is the one external dependency)
 python3 -m pip install -e '.[dev]'
 
-# 2. integrity of the local candidate spec artifacts
+# 2. integrity of the v0.1.0 normative artifacts
 ( cd spec/v0.1 && sha256sum -c CHECKSUMS.sha256 )
 
 # 3. validator over the whole corpus, report to stdout

@@ -1,7 +1,9 @@
 # Status — Claim Preservation Profile (CPP)
 
 ```yaml
-version: 0.1
+profile_version: "0.1"
+repository_release: "0.1.0"
+release_date: "2026-09-14"
 status: EXPERIMENTAL
 normative_status: author proposal
 independent_review: NOT_REQUESTED
@@ -15,6 +17,9 @@ conformance_claims: none
 
 | Field | Meaning here |
 | --- | --- |
+| `profile_version: "0.1"` | Version of the experimental profile semantics in `spec/v0.1/`. |
+| `repository_release: "0.1.0"` | Versioned repository release containing the profile, corpus, schemas, validator, tests and documentation. A release identifier is not a maturity claim. |
+| `release_date: "2026-09-14"` | Publication date of this repository release. It does not establish review, reproduction, deployment or adoption. |
 | `status: EXPERIMENTAL` | The profile is a research artifact. Requirement numbering, field names and the relation vocabulary may change without a compatibility guarantee. |
 | `normative_status: author proposal` | The MUST/MUST NOT language in the profile is the author's proposal for what a conforming pipeline would do. No standards body, working group, consortium or review process has adopted it. |
 | `independent_review: NOT_REQUESTED` | No independent review has been requested as of this version. This is a record of what has not happened, not a judgement about the profile's quality. |

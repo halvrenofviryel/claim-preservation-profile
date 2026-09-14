@@ -146,7 +146,7 @@ limits are recorded in [`CROSS_PROJECT_CONSISTENCY_AUDIT.md`](CROSS_PROJECT_CONS
 ## 6. Corrections to original negative-fixture attributions
 
 The public baseline preserved the original twenty negative fixtures byte-for-byte.
-This hardening branch corrects four loose requirement attributions in place while
+The v0.1.0 release corrects four loose requirement attributions in place while
 leaving every fixture's *expected relation* unchanged. The baseline remains intact
 on `main` and in commit `e5961ab2c54a2ade57bd2901131006480ed7b750`.
 

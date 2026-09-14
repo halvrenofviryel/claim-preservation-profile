@@ -6,7 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) loos
 Versions refer to the Claim Preservation Profile itself, which is EXPERIMENTAL: no
 compatibility guarantee applies across 0.x versions.
 
-## Unreleased — public-candidate hardening — 2026-09-14
+## 0.1.0 — 2026-09-14
+
+First public **Experimental** release. This release preserves the initial candidate
+at `e5961ab2c54a2ade57bd2901131006480ed7b750` and the public-candidate hardening at
+`95e5875ec7d24f013d35b2326b6b41df66cf004f` as separate commits in linear history.
+It contains twenty normative requirements, twenty-two negative fixtures, fifteen
+positive controls, and 104 passing tests. Six natural-language negative fixtures
+deliberately remain not mechanically decidable by the reference validator.
 
 ### Added
 
@@ -26,9 +33,10 @@ compatibility guarantee applies across 0.x versions.
 
 - Narrowed cross-project language to the exact versioned statements supported by
   the audited sources and made the individual Internet-Draft status explicit.
-- Removed CPP's top-level `date-released` CFF field so the public candidate is not
-  misrepresented as a release; the separately published position paper keeps its
-  verified `date-published` value.
+- Completed the v0.1.0 CFF release metadata while keeping the separately published
+  position paper's DOI and `date-published` value distinct from CPP metadata.
+- Removed the single `license-url` field because it represented only the CC BY 4.0
+  side of the repository's documented dual-license boundary.
 - Updated corpus/status documentation from 20 negative/13 positive fixtures to 22
   negative/15 positive fixtures. CPP-16 and CPP-19 are no longer described as
   unexercised.
@@ -40,18 +48,18 @@ compatibility guarantee applies across 0.x versions.
   CPP-N06 no longer cites CPP-20; CPP-N16 no longer cites CPP-6; CPP-N18 no longer
   cites CPP-20.
 
-No tag, GitHub Release, new repository version, or DOI for CPP is created by this
-hardening work.
+The versioned release does not change CPP's Experimental author-proposal status or
+create evidence of independent review, reproduction, deployment, conformance, or
+standards adoption.
 
-The entry below records the repository state at the preserved initial commit; it is
-retained as history rather than rewritten to describe this hardening branch.
-
-## 0.1.0 — 2026-09-14
+### Pre-release provenance — initial candidate e5961ab2
 
 Initial experimental profile. Local candidate; not released, not published, not
-tagged.
+tagged at that commit. The statements below record the state of the preserved
+baseline and are retained as history; later hardening and release work is described
+above.
 
-### Added
+#### Added in the initial candidate
 
 - **Initial experimental profile** — `spec/v0.1/CLAIM_PRESERVATION_PROFILE.md`,
   from the supplied v0.1 seed bundle: claim model `C = (P, S, Q, N, E, A, V)`, the
@@ -100,7 +108,7 @@ tagged.
   `LICENSE-CODE`.
 - **Local candidate integrity manifest** — `spec/v0.1/CHECKSUMS.sha256`.
 
-### Substantive corrections to the supplied seed profile
+#### Substantive corrections to the supplied seed profile
 
 Five corrections were made to `CLAIM_PRESERVATION_PROFILE_v0.1.md` when copying it
 to `spec/v0.1/CLAIM_PRESERVATION_PROFILE.md`. Every one is listed here; no other
@@ -145,7 +153,7 @@ The pristine seed bytes were preserved outside the repository for comparison. Th
 seed profile's SHA-256 as supplied was
 `70dac89a559f278a69cc2c55c3a4f6fbb0a8075ea72ca03a04834e4d94a8be22`.
 
-### Defects found in the fresh-context review and fixed before commit
+#### Defects found in the fresh-context review and fixed before the baseline commit
 
 A fresh-context adversarial review of the assembled repository ran before the initial
 commit. It confirmed defects in three areas, all fixed here:
@@ -179,7 +187,7 @@ The review also found looseness in four of the seed corpus's violation attributi
 Those fixtures are kept unmodified; the finding is recorded in
 `research/PRIOR_ART_AND_SCOPE.md` §6 rather than corrected in place.
 
-### Not done in this version
+#### Initial-candidate state at e5961ab2
 
 - No remote, no push, no GitHub repository, no tag, no release, no DOI, no
   publication.

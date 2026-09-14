@@ -135,7 +135,9 @@ def test_spec_does_not_claim_adoption_or_ownership_of_neighbouring_work(spec_tex
 def test_status_file_states_the_required_facts(repo_root):
     status = (repo_root / "STATUS.md").read_text(encoding="utf-8")
     for line in (
-        "version: 0.1",
+        'profile_version: "0.1"',
+        'repository_release: "0.1.0"',
+        'release_date: "2026-09-14"',
         "status: EXPERIMENTAL",
         "normative_status: author proposal",
         "independent_review: NOT_REQUESTED",
@@ -151,7 +153,10 @@ def test_status_file_states_the_required_facts(repo_root):
 
 def test_citation_metadata_parses_and_pins_verified_identifiers(repo_root):
     citation = yaml.safe_load((repo_root / "CITATION.cff").read_text(encoding="utf-8"))
-    assert "date-released" not in citation, "the unreleased CPP candidate must not claim a release date"
+    assert citation["date-released"] == "2026-09-14"
+    assert citation["repository-code"] == "https://github.com/halvrenofviryel/claim-preservation-profile"
+    assert citation["url"] == "https://github.com/halvrenofviryel/claim-preservation-profile"
+    assert "license-url" not in citation
     assert citation["authors"] == [
         {
             "family-names": "Abak",
