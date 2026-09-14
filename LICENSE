@@ -1,0 +1,73 @@
+# License
+
+This repository is dual-licensed. A single license could not express the boundary
+cleanly, so the boundary is stated here explicitly rather than applying one license
+to material it does not fit.
+
+## Dual-licensing boundary
+
+**Creative Commons Attribution 4.0 International (CC BY 4.0)** applies to the
+specification text, documentation and conformance fixture data:
+
+```text
+README.md
+STATUS.md
+CHANGELOG.md
+CITATION.cff
+LICENSE
+spec/**
+conformance/negative-fixtures.json
+conformance/positive-fixtures.json
+conformance/fixture.schema.json
+conformance/negative-fixture.schema.json
+research/**
+```
+
+**Apache License 2.0** applies to the executable code:
+
+```text
+conformance/validate.py
+tests/**
+.github/workflows/**
+```
+
+The full Apache-2.0 text is in [`LICENSE-CODE`](LICENSE-CODE). SPDX expression for
+the repository as a whole: `CC-BY-4.0 AND Apache-2.0`.
+
+## CC BY 4.0 grant
+
+Copyright 2026 Ali Toygar Abak (Phionyx).
+
+The CC BY 4.0 material above is licensed under the Creative Commons
+Attribution 4.0 International License. You are free to share and adapt it for any
+purpose, including commercially, provided you give appropriate credit, provide a
+link to the license, and indicate if changes were made.
+
+The authoritative legal code is published by Creative Commons at:
+
+    https://creativecommons.org/licenses/by/4.0/legalcode
+
+It is referenced rather than reproduced here; the linked text governs. A summary
+deed is at https://creativecommons.org/licenses/by/4.0/ and is not a substitute for
+the legal code.
+
+### Suggested attribution
+
+> Abak, A. T. (2026). *Claim Preservation Profile*, version 0.1. Phionyx.
+> Licensed under CC BY 4.0.
+
+## Third-party material
+
+No third-party copyrighted material is included in this repository, and no
+copyright is claimed over any.
+
+The Apache License 2.0 text in `LICENSE-CODE` is the Apache Software Foundation's
+license text, reproduced verbatim as that license contemplates; it is not the
+authors' work and no copyright over it is claimed. The CC BY 4.0 legal code is
+likewise Creative Commons' text and is referenced, not reproduced.
+
+Requirement identifiers, terminology and concepts referenced from other work —
+including AIREP, Measurement Axioms, CDE-12, the draft-abak IETF work area, and
+any externally published standards or literature — remain the property and
+responsibility of their respective authors. Referencing them here creates no claim
+over them, and no claim that they endorse this work.

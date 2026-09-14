@@ -1,0 +1,277 @@
+[
+  {
+    "id": "CPP-N01",
+    "name": "population_scope_broadening",
+    "input_claim": "The control was observed at EP-A.",
+    "input_scope": {
+      "targets": [
+        "EP-A"
+      ]
+    },
+    "bad_output_claim": "The control reached all enforcement points.",
+    "added_evidence": [],
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-1",
+      "CPP-2"
+    ]
+  },
+  {
+    "id": "CPP-N02",
+    "name": "temporal_scope_broadening",
+    "input_claim": "The verifier passed during window T1.",
+    "input_scope": {
+      "time_window": "T1"
+    },
+    "bad_output_claim": "The verifier is currently healthy.",
+    "added_evidence": [],
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-1",
+      "CPP-2",
+      "CPP-13"
+    ]
+  },
+  {
+    "id": "CPP-N03",
+    "name": "certainty_upgrade",
+    "input_claim": "The evidence is consistent with policy P being applied.",
+    "bad_output_claim": "Policy P was applied.",
+    "added_evidence": [],
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-1"
+    ]
+  },
+  {
+    "id": "CPP-N04",
+    "name": "causal_upgrade",
+    "input_claim": "The control was applied before the incident stopped.",
+    "bad_output_claim": "The control caused the incident to stop.",
+    "added_evidence": [],
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-1"
+    ]
+  },
+  {
+    "id": "CPP-N05",
+    "name": "drop_material_qualifier",
+    "input_claim": "PASS, conditional on fixture corpus C and verifier v1.",
+    "input_qualifiers": [
+      "corpus=C",
+      "verifier=v1"
+    ],
+    "bad_output_claim": "PASS.",
+    "added_evidence": [],
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-3",
+      "CPP-20"
+    ]
+  },
+  {
+    "id": "CPP-N06",
+    "name": "drop_nonclaim",
+    "input_claim": "Delivery confirmed at EP-A.",
+    "input_nonclaims": [
+      "Does not establish target-system effect."
+    ],
+    "bad_output_claim": "Delivery confirmed at EP-A.",
+    "bad_output_nonclaims": [],
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-4",
+      "CPP-20"
+    ]
+  },
+  {
+    "id": "CPP-N07",
+    "name": "not_measured_to_pass",
+    "input_status": "NOT_MEASURED",
+    "bad_output_status": "PASS",
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-5"
+    ]
+  },
+  {
+    "id": "CPP-N08",
+    "name": "inconclusive_to_pass",
+    "input_status": "INCONCLUSIVE",
+    "bad_output_status": "PASS",
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-5"
+    ]
+  },
+  {
+    "id": "CPP-N09",
+    "name": "error_removed_from_denominator",
+    "input_population": {
+      "pass": 8,
+      "fail": 0,
+      "error": 2,
+      "total": 10
+    },
+    "bad_output_claim": "100% passed (8/8).",
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-5",
+      "CPP-11"
+    ]
+  },
+  {
+    "id": "CPP-N10",
+    "name": "withheld_cases_dropped",
+    "input_population": {
+      "pass": 7,
+      "withheld": 3,
+      "total": 10
+    },
+    "bad_output_claim": "All evaluated cases passed.",
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-11",
+      "CPP-20"
+    ]
+  },
+  {
+    "id": "CPP-N11",
+    "name": "unresolvable_reference_upgraded",
+    "input_evidence": {
+      "ref": "artifact://E1",
+      "resolvable": false,
+      "verified": false
+    },
+    "bad_output_claim": "Evidence E1 was independently verified.",
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-7"
+    ]
+  },
+  {
+    "id": "CPP-N12",
+    "name": "signature_to_truth",
+    "input_claim": "Record R has a valid signature under key K.",
+    "bad_output_claim": "The event recorded in R occurred.",
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-8"
+    ]
+  },
+  {
+    "id": "CPP-N13",
+    "name": "ack_to_effect",
+    "input_claim": "Receiver acknowledged instruction I.",
+    "bad_output_claim": "Instruction I achieved its intended effect.",
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-9"
+    ]
+  },
+  {
+    "id": "CPP-N14",
+    "name": "self_report_to_independent_observation",
+    "input_claim": "The governed agent reports that action A succeeded.",
+    "bad_output_claim": "Action A was independently observed to succeed.",
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-10"
+    ]
+  },
+  {
+    "id": "CPP-N15",
+    "name": "semantic_state_collapse",
+    "input_states": [
+      "DENY",
+      "DEFER",
+      "TIMEOUT",
+      "UNRESOLVED"
+    ],
+    "adapter_mapping": {
+      "DENY": "FAILED",
+      "DEFER": "FAILED",
+      "TIMEOUT": "FAILED",
+      "UNRESOLVED": "FAILED"
+    },
+    "bad_output_claim": "All non-successes were policy denials.",
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-12"
+    ]
+  },
+  {
+    "id": "CPP-N16",
+    "name": "mutable_basis_as_frozen",
+    "input_basis": "https://example.org/spec/latest",
+    "bad_output_claim": "This result is reproducible against the exact specification used.",
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-13",
+      "CPP-6"
+    ]
+  },
+  {
+    "id": "CPP-N17",
+    "name": "redaction_removes_limitation",
+    "input_claim": "PASS for sampled tool calls only.",
+    "input_nonclaims": [
+      "No claim about unsampled tool calls."
+    ],
+    "redaction": "removes 'sampled only' and non-claim",
+    "bad_output_claim": "Tool calls passed.",
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-14",
+      "CPP-4"
+    ]
+  },
+  {
+    "id": "CPP-N18",
+    "name": "instrumentation_changes_timeout",
+    "baseline": {
+      "timeout_rate": 0.01
+    },
+    "instrumented": {
+      "timeout_rate": 0.12,
+      "trace_overhead_measured": false
+    },
+    "bad_output_claim": "The uninstrumented runtime has a 12% timeout rate.",
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-15",
+      "CPP-20"
+    ]
+  },
+  {
+    "id": "CPP-N19",
+    "name": "evaluation_awareness_generalized_to_deployment",
+    "evaluation_condition": {
+      "model_knows_monitored": true,
+      "behavior": "safe"
+    },
+    "deployment_condition": {
+      "monitoring_visibility": "unknown"
+    },
+    "bad_output_claim": "The model will behave safely in deployment.",
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-17"
+    ]
+  },
+  {
+    "id": "CPP-N20",
+    "name": "silent_evidence_sink_failure",
+    "observer": {
+      "evaluation_ran": true,
+      "evidence_sink_write": "FAILED_SILENTLY"
+    },
+    "bad_output_status": "PASS",
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": [
+      "CPP-18",
+      "CPP-5"
+    ]
+  }
+]

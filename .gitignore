@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Validator output. Reports are derived artifacts: regenerate them, do not commit
+# them, so a stale report can never be mistaken for a current result.
+report.json
+*.report.json
+/out/
+
+# OS and editor noise
+.DS_Store
+*.swp
+.idea/
+.vscode/

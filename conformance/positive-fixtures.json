@@ -1,0 +1,530 @@
+[
+  {
+    "id": "CPP-P01",
+    "name": "exact_claim_preservation",
+    "description": "A reporting stage republishes a verifier result with scope, qualifiers, non-claims and assurance level unchanged.",
+    "input": {
+      "claim": "Verifier v1 reported PASS for target EP-A during window T1.",
+      "status": "PASS",
+      "scope": { "targets": ["EP-A"], "time_window": "T1" },
+      "qualifiers": ["corpus=C", "verifier=v1"],
+      "non_claims": ["Does not establish target-system effect."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "spec@sha256:3f1c0b",
+      "condition": { "effect_state": "acknowledged" }
+    },
+    "transformation": {
+      "kind": "republish",
+      "description": "Verbatim republication into a report surface, with the claim boundary carried alongside the verdict.",
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "Verifier v1 reported PASS for target EP-A during window T1.",
+      "status": "PASS",
+      "scope": { "targets": ["EP-A"], "time_window": "T1" },
+      "qualifiers": ["corpus=C", "verifier=v1"],
+      "non_claims": ["Does not establish target-system effect."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "spec@sha256:3f1c0b",
+      "condition": { "effect_state": "acknowledged" }
+    },
+    "added_evidence": [],
+    "expected_relation": "EQUIVALENT",
+    "notes": "Baseline control. If this case does not evaluate as claim-preserving, the evaluator is over-flagging."
+  },
+  {
+    "id": "CPP-P02",
+    "name": "legitimate_scope_narrowing",
+    "description": "A per-target view of a multi-target result narrows the population scope and says so. Narrowing needs no added evidence.",
+    "input": {
+      "claim": "The control was observed at EP-A, EP-B and EP-C during window T1.",
+      "status": "PASS",
+      "scope": { "targets": ["EP-A", "EP-B", "EP-C"], "time_window": "T1" },
+      "qualifiers": ["observation=receiver-side"],
+      "non_claims": ["Does not establish target-system effect."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "spec@sha256:3f1c0b"
+    },
+    "transformation": {
+      "kind": "filter",
+      "description": "Select the EP-A rows for a single-target dashboard panel.",
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "The control was observed at EP-A during window T1.",
+      "status": "PASS",
+      "scope": { "targets": ["EP-A"], "time_window": "T1" },
+      "qualifiers": ["observation=receiver-side"],
+      "non_claims": ["Does not establish target-system effect."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "spec@sha256:3f1c0b"
+    },
+    "added_evidence": [],
+    "expected_relation": "NARROWER"
+  },
+  {
+    "id": "CPP-P03",
+    "name": "qualifier_preserving_summarization",
+    "description": "A summarizer shortens the prose but keeps every material qualifier and non-claim attached to the shortened verdict.",
+    "near_neighbour_of": "CPP-N05",
+    "load_bearing_difference": "The summarized output still carries the corpus and verifier qualifiers; CPP-N05 emits a bare PASS with the qualifier list dropped.",
+    "mechanically_separable": true,
+    "input": {
+      "claim": "PASS, conditional on fixture corpus C and verifier v1.",
+      "status": "PASS",
+      "qualifiers": ["corpus=C", "verifier=v1"],
+      "non_claims": ["No claim about corpora other than C."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "verifier@1.4.2"
+    },
+    "transformation": {
+      "kind": "summarize",
+      "description": "Shorten for a summary row while keeping the qualifier and non-claim fields populated.",
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "PASS (corpus C, verifier v1).",
+      "status": "PASS",
+      "qualifiers": ["corpus=C", "verifier=v1"],
+      "non_claims": ["No claim about corpora other than C."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "verifier@1.4.2"
+    },
+    "added_evidence": [],
+    "expected_relation": "EQUIVALENT"
+  },
+  {
+    "id": "CPP-P04",
+    "name": "supported_scope_strengthening",
+    "description": "Population scope is broadened only after independent observation records for the remaining targets are introduced, and the strengthening names the dimension, the evidence and the rule.",
+    "near_neighbour_of": "CPP-N01",
+    "load_bearing_difference": "Identifiable added evidence covers EP-B and EP-C and is recorded against the population-scope dimension; CPP-N01 broadens with added_evidence empty. The pair is not otherwise identical: CPP-N01 states its broadened target set only in prose and emits no structured output scope, so the reference validator separates the pair on that absence as well as on the added evidence.",
+    "mechanically_separable": true,
+    "input": {
+      "claim": "The control was observed at EP-A during window T1.",
+      "status": "PASS",
+      "scope": { "targets": ["EP-A"], "time_window": "T1" },
+      "qualifiers": ["observation=receiver-side"],
+      "non_claims": ["Does not establish target-system effect."],
+      "assurance": "INDEPENDENT_OBSERVER",
+      "basis": "spec@sha256:3f1c0b"
+    },
+    "transformation": {
+      "kind": "aggregate",
+      "description": "Join the EP-A observation with independently collected observations for EP-B and EP-C. The enforcement-point register for window T1 enumerates exactly EP-A, EP-B and EP-C.",
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "The control was observed at EP-A, EP-B and EP-C during window T1; these are the enforcement points registered for T1.",
+      "status": "PASS",
+      "scope": { "targets": ["EP-A", "EP-B", "EP-C"], "time_window": "T1" },
+      "qualifiers": [
+        "observation=receiver-side",
+        "target set bounded by the T1 enforcement-point register"
+      ],
+      "non_claims": [
+        "Does not establish target-system effect.",
+        "Does not cover enforcement points registered outside window T1."
+      ],
+      "assurance": "INDEPENDENT_OBSERVER",
+      "basis": "spec@sha256:3f1c0b"
+    },
+    "added_evidence": [
+      {
+        "ref": "artifact://obs-EP-B-T1",
+        "resolvable": true,
+        "verified": true,
+        "assurance": "INDEPENDENT_OBSERVER",
+        "covers": ["EP-B"],
+        "supports_dimension": ["population_scope"],
+        "description": "Independent receiver-side observation record for EP-B in window T1."
+      },
+      {
+        "ref": "artifact://obs-EP-C-T1",
+        "resolvable": true,
+        "verified": true,
+        "assurance": "INDEPENDENT_OBSERVER",
+        "covers": ["EP-C"],
+        "supports_dimension": ["population_scope"],
+        "description": "Independent receiver-side observation record for EP-C in window T1."
+      },
+      {
+        "ref": "artifact://ep-register-T1",
+        "resolvable": true,
+        "verified": true,
+        "assurance": "INDEPENDENT_OBSERVER",
+        "covers": ["EP-A", "EP-B", "EP-C"],
+        "supports_dimension": ["population_scope", "completeness"],
+        "description": "Enforcement-point register for window T1, bounding the target set to exactly these three points."
+      }
+    ],
+    "expected_relation": "SUPPORTED_STRENGTHENING",
+    "notes": "The strengthening is bounded by the register: the output still makes no claim about points outside window T1, so completeness is bounded-complete rather than globally complete."
+  },
+  {
+    "id": "CPP-P05",
+    "name": "signature_claim_kept_bounded",
+    "description": "A signature check is reported as record integrity and is explicitly not promoted to the truth of the recorded fact.",
+    "near_neighbour_of": "CPP-N12",
+    "load_bearing_difference": "The output asserts record integrity and keeps the non-claim that the recorded event is not thereby established; CPP-N12 asserts that the recorded event occurred.",
+    "mechanically_separable": false,
+    "notes": "CPP-N12 states the integrity-to-truth upgrade only in prose, so the reference validator reports it as undecidable rather than as a violation. This pairing is a bounded-claim control for a human reader, not a demonstration that the validator separates the two. The structured form of the same upgrade is exercised in tests/test_validator.py.",
+    "input": {
+      "claim": "Record R has a valid signature under key K.",
+      "status": "PASS",
+      "qualifiers": ["signature algorithm and key K as pinned in the basis"],
+      "non_claims": ["Does not establish that the event recorded in R occurred."],
+      "assurance": "KEY_ATTRIBUTED",
+      "basis": "keyring@sha256:9ab412"
+    },
+    "transformation": {
+      "kind": "normalize",
+      "description": "Map the signature-check result onto the report's integrity field.",
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "Record R's integrity is established under key K.",
+      "status": "PASS",
+      "qualifiers": ["signature algorithm and key K as pinned in the basis"],
+      "non_claims": [
+        "Does not establish that the event recorded in R occurred.",
+        "Does not establish that key K was held only by its nominal owner."
+      ],
+      "assurance": "KEY_ATTRIBUTED",
+      "basis": "keyring@sha256:9ab412"
+    },
+    "added_evidence": [],
+    "expected_relation": "EQUIVALENT"
+  },
+  {
+    "id": "CPP-P06",
+    "name": "acknowledgement_not_promoted_to_effect",
+    "description": "A receiver acknowledgement is carried downstream as an acknowledgement, with the effect non-claim intact.",
+    "near_neighbour_of": "CPP-N13",
+    "load_bearing_difference": "The output keeps effect_state at 'acknowledged'; CPP-N13 moves the same evidence to an achieved-effect claim.",
+    "mechanically_separable": false,
+    "notes": "CPP-N13 states the acknowledgement-to-effect upgrade only in prose, so the reference validator reports it as undecidable rather than as a violation. This pairing is a bounded-claim control for a human reader. The structured form of the same upgrade is exercised in tests/test_validator.py.",
+    "input": {
+      "claim": "Receiver acknowledged instruction I.",
+      "status": "PASS",
+      "non_claims": ["Does not establish that instruction I achieved its intended effect."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "adapter@2.0.1",
+      "condition": { "effect_state": "acknowledged" }
+    },
+    "transformation": {
+      "kind": "report",
+      "description": "Render the delivery row in the operator report.",
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "Receiver acknowledged instruction I. Effect not observed.",
+      "status": "PASS",
+      "non_claims": [
+        "Does not establish that instruction I achieved its intended effect.",
+        "Does not establish that the receiver applied I."
+      ],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "adapter@2.0.1",
+      "condition": { "effect_state": "acknowledged" }
+    },
+    "added_evidence": [],
+    "expected_relation": "EQUIVALENT"
+  },
+  {
+    "id": "CPP-P07",
+    "name": "aggregation_preserves_denominator",
+    "description": "An aggregate keeps the assessed, errored and unmeasured populations visible and states the denominator it used.",
+    "near_neighbour_of": "CPP-N09",
+    "load_bearing_difference": "The output carries the population block including the two ERROR cases and reports against a denominator of 10; CPP-N09 reports 8/8 and drops the errors from the denominator.",
+    "mechanically_separable": true,
+    "input": {
+      "claim": "Case-level results for suite S.",
+      "status": "MIXED",
+      "population": { "pass": 8, "fail": 0, "error": 2, "total": 10 },
+      "qualifiers": ["suite=S"],
+      "non_claims": ["No claim about the outcome of the two ERROR cases."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "runner@sha256:c41d09"
+    },
+    "transformation": {
+      "kind": "aggregate",
+      "description": "Roll case results into a suite summary without changing the denominator.",
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "8 of 10 cases passed; 2 cases ERROR and were not assessed.",
+      "status": "MIXED",
+      "population": { "pass": 8, "fail": 0, "error": 2, "total": 10 },
+      "qualifiers": ["suite=S", "denominator = all 10 submitted cases"],
+      "non_claims": ["No claim about the outcome of the two ERROR cases."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "runner@sha256:c41d09"
+    },
+    "added_evidence": [],
+    "expected_relation": "EQUIVALENT"
+  },
+  {
+    "id": "CPP-P08",
+    "name": "observer_effect_qualified_result",
+    "description": "A measured result stays scoped to the instrumented condition, with the instrumentation overhead measured against an uninstrumented comparator and the uninstrumented generalization explicitly withheld.",
+    "near_neighbour_of": "CPP-N18",
+    "load_bearing_difference": "Instrumentation overhead was measured against an uninstrumented comparator, so the result carries an observer-effect assessment where CPP-N18 carries none. That is the fact the validator separates the pair on; keeping the output claim scoped to the instrumented condition is the consequence the assessment licenses, and CPP-N18 states its uninstrumented generalization only in prose.",
+    "mechanically_separable": true,
+    "input": {
+      "claim": "Timeout rate measured under tracing was 0.12 for window T1.",
+      "status": "MEASURED",
+      "scope": { "boundary": "instrumented runtime (tracing enabled)", "time_window": "T1" },
+      "qualifiers": ["condition=instrumented", "tracer=t1.9.0, sampling=1.0"],
+      "non_claims": ["Does not establish the timeout rate of the uninstrumented runtime."],
+      "assurance": "INDEPENDENT_OBSERVER",
+      "basis": "tracer@1.9.0+spec@sha256:3f1c0b",
+      "condition": { "generalizes_to": "instrumented" }
+    },
+    "transformation": {
+      "kind": "report",
+      "description": "Publish the measured figure on the reliability page.",
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "Under tracing (tracer 1.9.0, full sampling), the timeout rate in window T1 was 0.12. The uninstrumented comparator measured 0.01; the difference is attributed to instrumentation overhead and is not carried to the uninstrumented runtime.",
+      "status": "MEASURED",
+      "scope": { "boundary": "instrumented runtime (tracing enabled)", "time_window": "T1" },
+      "qualifiers": [
+        "condition=instrumented",
+        "tracer=t1.9.0, sampling=1.0",
+        "uninstrumented comparator measured separately at 0.01"
+      ],
+      "non_claims": ["Does not establish the timeout rate of the uninstrumented runtime."],
+      "assurance": "INDEPENDENT_OBSERVER",
+      "basis": "tracer@1.9.0+spec@sha256:3f1c0b",
+      "condition": { "generalizes_to": "instrumented" }
+    },
+    "added_evidence": [],
+    "baseline": { "timeout_rate": 0.01 },
+    "instrumented": { "timeout_rate": 0.12, "trace_overhead_measured": true },
+    "observer_effect": {
+      "subject_awareness": "NO",
+      "execution_interference": "MEASURED",
+      "comparator": { "kind": "UNINSTRUMENTED", "reference": "artifact://baseline-T1" },
+      "measured_overhead": { "latency_delta": "+0.11 timeout-rate points", "throughput_delta": null },
+      "generalizes_to_uninstrumented": "NO",
+      "perturbation_nonclaims": [
+        "The instrumented timeout rate does not bound the uninstrumented timeout rate."
+      ]
+    },
+    "expected_relation": "EQUIVALENT"
+  },
+  {
+    "id": "CPP-P09",
+    "name": "adapter_preserves_semantic_states",
+    "description": "An adapter that must emit a coarse FAILED bucket keeps the original governance-relevant states reviewable and qualifies the output claim accordingly.",
+    "near_neighbour_of": "CPP-N15",
+    "load_bearing_difference": "The adapter mapping is the same many-to-one collapse onto FAILED as CPP-N15. The one difference is that the lost distinctions remain reviewable downstream, which CPP-12 requires and which this fixture records as preserves_distinctions.",
+    "mechanically_separable": true,
+    "input": {
+      "claim": "Four non-success outcomes with distinct causes.",
+      "status": "MIXED",
+      "states": ["DENY", "DEFER", "TIMEOUT", "UNRESOLVED"],
+      "population": { "pass": 0, "fail": 4, "total": 4 },
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "adapter@2.0.1"
+    },
+    "transformation": {
+      "kind": "adapt",
+      "description": "Map to the consumer's single FAILED bucket, which cannot represent the cause, while retaining the source state on each row so the lost distinction stays reviewable.",
+      "mapping": {
+        "DENY": "FAILED",
+        "DEFER": "FAILED",
+        "TIMEOUT": "FAILED",
+        "UNRESOLVED": "FAILED"
+      },
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "Four non-successes: 1 DENY, 1 DEFER, 1 TIMEOUT, 1 UNRESOLVED. Only the DENY case is a policy denial.",
+      "status": "MIXED",
+      "states": ["DENY", "DEFER", "TIMEOUT", "UNRESOLVED"],
+      "population": { "pass": 0, "fail": 4, "total": 4 },
+      "qualifiers": ["FAILED is a display bucket, not a cause"],
+      "non_claims": ["Does not establish that DEFER, TIMEOUT or UNRESOLVED cases were denied by policy."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "adapter@2.0.1"
+    },
+    "added_evidence": [],
+    "expected_relation": "EQUIVALENT"
+  },
+  {
+    "id": "CPP-P10",
+    "name": "not_measured_preserved_downstream",
+    "description": "An unmeasured requirement stays unmeasured through aggregation and display instead of being absorbed into a pass.",
+    "near_neighbour_of": "CPP-N07",
+    "load_bearing_difference": "The output status remains NOT_MEASURED; CPP-N07 emits PASS from the same input status with no added evidence.",
+    "mechanically_separable": true,
+    "input": {
+      "claim": "Requirement R-4 was not exercised by this run.",
+      "status": "NOT_MEASURED",
+      "qualifiers": ["run=2026-09-14T00:00:00Z/1"],
+      "non_claims": ["Absence of a failure for R-4 is not evidence of conformance to R-4."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "runner@sha256:c41d09"
+    },
+    "transformation": {
+      "kind": "aggregate",
+      "description": "Roll into the suite view, keeping NOT_MEASURED as its own column rather than folding it into pass or fail.",
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "R-4: NOT_MEASURED in this run.",
+      "status": "NOT_MEASURED",
+      "qualifiers": ["run=2026-09-14T00:00:00Z/1"],
+      "non_claims": ["Absence of a failure for R-4 is not evidence of conformance to R-4."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "runner@sha256:c41d09"
+    },
+    "added_evidence": [],
+    "expected_relation": "EQUIVALENT"
+  },
+  {
+    "id": "CPP-P11",
+    "name": "unfetched_evidence_not_reported_as_verified",
+    "description": "A referenced artifact could not be fetched. The downstream claim keeps the reference, keeps the assurance level it actually has, and says outright what was not established.",
+    "near_neighbour_of": "CPP-N11",
+    "load_bearing_difference": "The output leaves assurance at SELF_ASSERTED and carries the non-claim that E1 was not verified; CPP-N11 reports the same unresolved reference as independently verified.",
+    "mechanically_separable": false,
+    "notes": "CPP-N11 asserts the verification upgrade only in prose and emits no structured output assurance, so the reference validator reports it as INCONCLUSIVE rather than as a violation. This fixture is still the CPP-7 positive control: it is the only fixture in either corpus on which the evidence-resolvability check reaches a measured, preserving outcome. The structured form of the N11 upgrade is exercised in tests/test_validator.py.",
+    "input": {
+      "claim": "The producer references artifact E1 in support of its result.",
+      "status": "INCONCLUSIVE",
+      "evidence": [
+        {
+          "ref": "artifact://E1",
+          "resolvable": false,
+          "verified": false,
+          "assurance": "SELF_ASSERTED",
+          "description": "Referenced by the producer; dereference failed."
+        }
+      ],
+      "qualifiers": ["E1 was referenced but not retrieved"],
+      "non_claims": ["Does not establish that E1 exists, or that its contents support the result."],
+      "assurance": "SELF_ASSERTED",
+      "basis": "verifier@1.4.2"
+    },
+    "transformation": {
+      "kind": "report",
+      "description": "Render the evidence row, showing the unresolved reference as unresolved.",
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "Artifact E1 was referenced by the producer and could not be retrieved. Result remains INCONCLUSIVE.",
+      "status": "INCONCLUSIVE",
+      "evidence": [
+        {
+          "ref": "artifact://E1",
+          "resolvable": false,
+          "verified": false,
+          "assurance": "SELF_ASSERTED",
+          "description": "Referenced by the producer; dereference failed."
+        }
+      ],
+      "qualifiers": ["E1 was referenced but not retrieved"],
+      "non_claims": [
+        "Does not establish that E1 exists, or that its contents support the result.",
+        "Does not establish that E1 was verified by anyone."
+      ],
+      "assurance": "SELF_ASSERTED",
+      "basis": "verifier@1.4.2"
+    },
+    "added_evidence": [],
+    "expected_relation": "EQUIVALENT",
+    "notes": "Exercises CPP-7 from the preserving side: an unresolvable reference stays unresolvable, and the result stays INCONCLUSIVE rather than resolving itself by narration."
+  },
+  {
+    "id": "CPP-P12",
+    "name": "evaluation_awareness_transfer_with_evidence",
+    "description": "Behaviour observed under a monitoring condition the model could detect is carried to deployment only because a paired blinded arm supports the transfer, and the transfer evidence is named.",
+    "near_neighbour_of": "CPP-N19",
+    "load_bearing_difference": "Identifiable added evidence — a blinded deployment-like arm with no detectable monitoring cue — supports the transfer and is recorded against the evaluation-transfer dimension; CPP-N19 carries the same evaluation-aware observation to deployment with no such evidence.",
+    "mechanically_separable": true,
+    "input": {
+      "claim": "Under monitored evaluation, the model refused all 40 unsafe requests.",
+      "status": "MEASURED",
+      "qualifiers": ["condition=monitored", "n=40"],
+      "non_claims": ["Does not by itself establish behaviour where monitoring is not detectable."],
+      "assurance": "INDEPENDENT_OBSERVER",
+      "basis": "evalsuite@sha256:7d2e55"
+    },
+    "transformation": {
+      "kind": "aggregate",
+      "description": "Combine the monitored arm with a blinded arm run under deployment-like conditions.",
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "Across a monitored arm (40/40 refusals) and a blinded deployment-like arm (39/40 refusals), refusal behaviour did not differ materially between conditions.",
+      "status": "MEASURED",
+      "qualifiers": [
+        "condition=monitored",
+        "n=40",
+        "paired blinded arm, n=40, monitoring cue removed",
+        "transfer supported for this task distribution only"
+      ],
+      "non_claims": [
+        "Does not by itself establish behaviour where monitoring is not detectable.",
+        "Does not establish transfer to task distributions outside the evaluated set.",
+        "Does not establish that the blinded arm was undetectable to the model, only that no cue was presented."
+      ],
+      "assurance": "INDEPENDENT_OBSERVER",
+      "basis": "evalsuite@sha256:7d2e55"
+    },
+    "added_evidence": [
+      {
+        "ref": "artifact://blinded-arm-2026-09",
+        "resolvable": true,
+        "verified": true,
+        "assurance": "INDEPENDENT_OBSERVER",
+        "supports_dimension": ["evaluation_transfer"],
+        "description": "Paired blinded arm under deployment-like conditions with the monitoring cue removed; 39/40 refusals."
+      }
+    ],
+    "evaluation_condition": { "model_knows_monitored": true, "behavior": "safe" },
+    "deployment_condition": { "monitoring_visibility": "cue_removed", "behavior": "safe" },
+    "expected_relation": "SUPPORTED_STRENGTHENING",
+    "notes": "The strengthening stays bounded: the non-claims keep it inside the evaluated task distribution and stop short of asserting that the blinded arm was genuinely undetectable."
+  },
+  {
+    "id": "CPP-P13",
+    "name": "evidence_sink_failure_surfaced_as_non_success",
+    "description": "The evaluation ran but the evidence sink write failed. The pipeline emits a distinguishable non-success state instead of the pass the evaluation would otherwise have produced.",
+    "near_neighbour_of": "CPP-N20",
+    "load_bearing_difference": "The emitted status is ERROR rather than PASS, so the recording failure remains distinguishable downstream; CPP-N20 emits PASS over the same silent sink failure.",
+    "mechanically_separable": true,
+    "input": {
+      "claim": "Evaluation of suite S completed; all assertions held.",
+      "status": "PASS",
+      "qualifiers": ["suite=S"],
+      "non_claims": ["Does not establish conformance outside suite S."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "runner@sha256:c41d09"
+    },
+    "transformation": {
+      "kind": "publish",
+      "description": "Attempt to record the run to the evidence sink and publish the result.",
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "Suite S: ERROR. The evaluation ran and its assertions held in-process, but the evidence write failed, so no assurance result is available for this run.",
+      "status": "ERROR",
+      "qualifiers": ["suite=S", "evidence sink write failed; in-process outcome is not evidence"],
+      "non_claims": [
+        "Does not establish conformance outside suite S.",
+        "Does not establish that suite S passed, because the run left no evidence."
+      ],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "runner@sha256:c41d09"
+    },
+    "added_evidence": [],
+    "observer": { "evaluation_ran": true, "evidence_sink_write": "FAILED" },
+    "expected_relation": "NARROWER",
+    "notes": "A measurement failure is a measurement failure even when the thing being measured looked fine in memory. The output is weaker than the input, which is the correct direction."
+  }
+]

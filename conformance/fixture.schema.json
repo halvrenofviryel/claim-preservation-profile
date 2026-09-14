@@ -1,0 +1,268 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://phionyx.ai/schemas/cpp/v0.1/fixture.schema.json",
+  "title": "CPP v0.1 Conformance Fixture (common)",
+  "description": "Common shape for both positive and negative Claim Preservation Profile conformance fixtures. The v0.1 negative corpus was authored before this schema existed and uses a flat field layout; those field names are retained here as backwards-compatible aliases rather than rewritten, so the supplied negative fixtures validate unchanged. New fixtures SHOULD use the canonical nested layout (input / transformation / output).",
+  "type": "object",
+  "required": ["id", "name", "expected_relation"],
+  "additionalProperties": false,
+  "$defs": {
+    "relation": {
+      "enum": [
+        "EQUIVALENT",
+        "NARROWER",
+        "SUPPORTED_STRENGTHENING",
+        "AMPLIFIED_UNSUPPORTED",
+        "INCOMPARABLE",
+        "NOT_MEASURED",
+        "INCONCLUSIVE",
+        "ERROR"
+      ]
+    },
+    "requirement_id": {
+      "type": "string",
+      "pattern": "^CPP-(?:[1-9]|1[0-9]|20)$"
+    },
+    "requirement_list": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/requirement_id" },
+      "uniqueItems": true
+    },
+    "population": {
+      "type": "object",
+      "description": "Case counts. Non-success populations (fail, error, withheld, not_measured, inconclusive) are part of the denominator and must survive aggregation (CPP-11).",
+      "additionalProperties": true,
+      "properties": {
+        "pass": { "type": "integer", "minimum": 0 },
+        "fail": { "type": "integer", "minimum": 0 },
+        "error": { "type": "integer", "minimum": 0 },
+        "withheld": { "type": "integer", "minimum": 0 },
+        "not_measured": { "type": "integer", "minimum": 0 },
+        "inconclusive": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "evidence": {
+      "description": "An evidence reference. A bare string is accepted as shorthand for {\"ref\": <string>}.",
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        {
+          "type": "object",
+          "required": ["ref"],
+          "additionalProperties": true,
+          "properties": {
+            "ref": { "type": "string", "minLength": 1 },
+            "resolvable": { "type": "boolean" },
+            "verified": { "type": "boolean" },
+            "assurance": {
+              "enum": [
+                "SELF_ASSERTED",
+                "SAME_PROCESS_CHECKED",
+                "INTEGRITY_CHECKED",
+                "KEY_ATTRIBUTED",
+                "INDEPENDENT_OBSERVER",
+                "INDEPENDENT_REPLAY",
+                "UNKNOWN"
+              ]
+            },
+            "covers": { "type": "array", "items": { "type": "string" } },
+            "supports_dimension": { "type": "array", "items": { "type": "string" } },
+            "description": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "evidence_list": { "type": "array", "items": { "$ref": "#/$defs/evidence" } },
+    "scope": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "targets": { "type": "array", "items": { "type": "string" } },
+        "time_window": { "type": "string" },
+        "boundary": { "type": "string" },
+        "population": { "type": "string" },
+        "operations": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "claim_side": {
+      "type": "object",
+      "description": "Canonical layout for one side of a transformation.",
+      "additionalProperties": false,
+      "properties": {
+        "claim": { "type": "string" },
+        "status": { "type": "string" },
+        "scope": { "$ref": "#/$defs/scope" },
+        "qualifiers": { "type": "array", "items": { "type": "string" } },
+        "non_claims": { "type": "array", "items": { "type": "string" } },
+        "population": { "$ref": "#/$defs/population" },
+        "evidence": { "$ref": "#/$defs/evidence_list" },
+        "assurance": {
+          "enum": [
+            "SELF_ASSERTED",
+            "SAME_PROCESS_CHECKED",
+            "INTEGRITY_CHECKED",
+            "KEY_ATTRIBUTED",
+            "INDEPENDENT_OBSERVER",
+            "INDEPENDENT_REPLAY",
+            "UNKNOWN"
+          ]
+        },
+        "states": { "type": "array", "items": { "type": "string" } },
+        "basis": { "type": "string" },
+        "condition": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "observer_effect": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "subject_awareness": { "enum": ["YES", "NO", "UNKNOWN", "NOT_MEASURED"] },
+        "execution_interference": {
+          "enum": ["NONE_OBSERVED", "MEASURED", "BOUNDED", "INCONCLUSIVE", "NOT_MEASURED"]
+        },
+        "comparator": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "kind": { "enum": ["NONE", "UNINSTRUMENTED", "LOWER_INTRUSION", "SHADOW", "REPLAY"] },
+            "reference": { "type": ["string", "null"] }
+          }
+        },
+        "measured_overhead": { "type": "object", "additionalProperties": true },
+        "generalizes_to_uninstrumented": { "enum": ["YES", "NO", "UNKNOWN", "NOT_MEASURED"] },
+        "perturbation_nonclaims": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "properties": {
+    "id": {
+      "description": "CPP-Nnn for negative fixtures, CPP-Pnn for positive fixtures.",
+      "type": "string",
+      "pattern": "^CPP-[NP][0-9]{2}$"
+    },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "notes": { "type": ["string", "array"], "items": { "type": "string" } },
+    "near_neighbour_of": {
+      "description": "Id of a paired fixture on the other side of the claim-preservation boundary. The pairing names the fact the corpus intends to discriminate on; it does not assert that the two fixtures are otherwise identical, since the seed negative corpus records only the fields each of its cases needs.",
+      "type": "string",
+      "pattern": "^CPP-[NP][0-9]{2}$"
+    },
+    "load_bearing_difference": {
+      "description": "The fact this pairing turns on: what makes this fixture claim-preserving where near_neighbour_of is not.",
+      "type": "string"
+    },
+    "mechanically_separable": {
+      "description": "False when the paired negative states its failure only in prose, so the reference validator cannot separate the pair and reports the negative as undecidable. Recording this prevents the pairing from being read as a demonstration of mechanical discrimination.",
+      "type": "boolean"
+    },
+
+    "input": { "$ref": "#/$defs/claim_side" },
+    "output": { "$ref": "#/$defs/claim_side" },
+    "transformation": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "What the pipeline stage did: summarize, aggregate, adapt, redact, normalize, publish.",
+      "properties": {
+        "kind": { "type": "string" },
+        "description": { "type": "string" },
+        "mapping": { "type": "object", "additionalProperties": true },
+        "preserves_distinctions": { "type": "boolean" }
+      }
+    },
+
+    "added_evidence": { "$ref": "#/$defs/evidence_list" },
+    "expected_relation": { "$ref": "#/$defs/relation" },
+    "expected_violations": { "$ref": "#/$defs/requirement_list" },
+    "observer_effect": { "$ref": "#/$defs/observer_effect" },
+
+    "violates": {
+      "description": "Backwards-compatible alias of expected_violations, as used by the supplied v0.1 negative corpus.",
+      "$ref": "#/$defs/requirement_list"
+    },
+    "input_claim": { "description": "Alias of input.claim.", "type": "string" },
+    "input_status": { "description": "Alias of input.status.", "type": "string" },
+    "input_scope": { "description": "Alias of input.scope.", "$ref": "#/$defs/scope" },
+    "input_qualifiers": { "description": "Alias of input.qualifiers.", "type": "array", "items": { "type": "string" } },
+    "input_nonclaims": { "description": "Alias of input.non_claims.", "type": "array", "items": { "type": "string" } },
+    "input_population": { "description": "Alias of input.population.", "$ref": "#/$defs/population" },
+    "input_evidence": {
+      "description": "Alias of input.evidence. The v0.1 corpus uses a single object here; a list is also accepted.",
+      "oneOf": [{ "$ref": "#/$defs/evidence" }, { "$ref": "#/$defs/evidence_list" }]
+    },
+    "input_basis": { "description": "Alias of input.basis.", "type": "string" },
+    "input_states": { "description": "Alias of input.states.", "type": "array", "items": { "type": "string" } },
+    "bad_output_claim": { "description": "Alias of output.claim for negative fixtures.", "type": "string" },
+    "bad_output_status": { "description": "Alias of output.status for negative fixtures.", "type": "string" },
+    "bad_output_nonclaims": { "description": "Alias of output.non_claims for negative fixtures.", "type": "array", "items": { "type": "string" } },
+    "bad_output_qualifiers": { "description": "Alias of output.qualifiers for negative fixtures.", "type": "array", "items": { "type": "string" } },
+    "bad_output_population": { "description": "Alias of output.population for negative fixtures.", "$ref": "#/$defs/population" },
+    "adapter_mapping": { "description": "Alias of transformation.mapping.", "type": "object", "additionalProperties": true },
+    "redaction": { "description": "Alias of transformation.description for redaction-kind transformations.", "type": "string" },
+    "baseline": { "description": "Alias of observer_effect comparator measurements taken without instrumentation.", "type": "object", "additionalProperties": true },
+    "instrumented": { "description": "Alias of observer_effect measurements taken under instrumentation.", "type": "object", "additionalProperties": true },
+    "evaluation_condition": { "description": "Conditions under which the subject was evaluated (CPP-17).", "type": "object", "additionalProperties": true },
+    "deployment_condition": { "description": "Conditions the result is being generalized to (CPP-17).", "type": "object", "additionalProperties": true },
+    "observer": { "description": "Observer/evidence-sink state for this case (CPP-16, CPP-18).", "type": "object", "additionalProperties": true }
+  },
+  "allOf": [
+    {
+      "description": "A fixture that expects unsupported amplification must name at least one violated requirement, under either the canonical field or the v0.1 alias.",
+      "if": {
+        "properties": { "expected_relation": { "const": "AMPLIFIED_UNSUPPORTED" } },
+        "required": ["expected_relation"]
+      },
+      "then": {
+        "anyOf": [
+          { "required": ["violates"], "properties": { "violates": { "minItems": 1 } } },
+          { "required": ["expected_violations"], "properties": { "expected_violations": { "minItems": 1 } } }
+        ]
+      }
+    },
+    {
+      "description": "A fixture that expects a claim-preserving relation must not also declare violated requirements.",
+      "if": {
+        "properties": {
+          "expected_relation": { "enum": ["EQUIVALENT", "NARROWER", "SUPPORTED_STRENGTHENING"] }
+        },
+        "required": ["expected_relation"]
+      },
+      "then": {
+        "properties": {
+          "violates": { "maxItems": 0 },
+          "expected_violations": { "maxItems": 0 }
+        }
+      }
+    },
+    {
+      "description": "Strengthening must be attributable to identifiable added evidence (CPP-1).",
+      "if": {
+        "properties": { "expected_relation": { "const": "SUPPORTED_STRENGTHENING" } },
+        "required": ["expected_relation"]
+      },
+      "then": {
+        "required": ["added_evidence"],
+        "properties": { "added_evidence": { "minItems": 1 } }
+      }
+    },
+    {
+      "description": "Positive-fixture ids must carry a claim-preserving expected relation; negative-fixture ids must not.",
+      "if": {
+        "properties": { "id": { "pattern": "^CPP-P" } },
+        "required": ["id"]
+      },
+      "then": {
+        "properties": {
+          "expected_relation": { "enum": ["EQUIVALENT", "NARROWER", "SUPPORTED_STRENGTHENING"] }
+        }
+      },
+      "else": {
+        "properties": {
+          "expected_relation": {
+            "enum": ["AMPLIFIED_UNSUPPORTED", "INCOMPARABLE", "NOT_MEASURED", "INCONCLUSIVE", "ERROR"]
+          }
+        }
+      }
+    }
+  ]
+}

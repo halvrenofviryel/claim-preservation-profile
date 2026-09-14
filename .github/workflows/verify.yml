@@ -1,0 +1,50 @@
+name: verify
+
+# Not pushed anywhere as of v0.1. This workflow is part of the local candidate and
+# describes how the repository verifies itself.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install declared dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+
+      - name: Verify the local candidate integrity manifest
+        working-directory: spec/v0.1
+        run: sha256sum -c CHECKSUMS.sha256
+
+      - name: Run the validator over all fixtures
+        # Exit code reports run and corpus validity, not claim verdicts.
+        # --fail-on-contradiction is an opt-in policy gate: it fails the job if a
+        # fixture's declared relation contradicts the relation the validator derives.
+        run: python conformance/validate.py --report cpp-report.json --fail-on-contradiction
+
+      - name: Run the test suite
+        run: python -m pytest tests -q
+
+      - name: Upload the validator report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpp-validator-report
+          path: cpp-report.json
+          if-no-files-found: warn

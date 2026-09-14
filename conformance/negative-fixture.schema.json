@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CPP v0.1 Negative Fixture",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "expected_relation",
+    "violates"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^CPP-N[0-9]{2}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expected_relation": {
+      "enum": [
+        "EQUIVALENT",
+        "NARROWER",
+        "SUPPORTED_STRENGTHENING",
+        "AMPLIFIED_UNSUPPORTED",
+        "INCOMPARABLE",
+        "NOT_MEASURED",
+        "INCONCLUSIVE",
+        "ERROR"
+      ]
+    },
+    "violates": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^CPP-[0-9]+$"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: "If you reference the Claim Preservation Profile, please cite it as below."
+title: "Claim Preservation Profile"
+abstract: >-
+  An experimental specification and conformance corpus for preserving
+  evidence-backed claim scope, qualifications, non-claims, assurance state, and
+  observer validity across AI assurance pipelines. Experimental author proposal:
+  not a standard, not adopted, not independently reviewed, not independently
+  reproduced, not deployed.
+type: software
+version: "0.1.0"
+date-released: "2026-09-14"
+license:
+  - CC-BY-4.0
+  - Apache-2.0
+license-url: "https://creativecommons.org/licenses/by/4.0/legalcode"
+keywords:
+  - claim preservation
+  - evidence contract
+  - AI assurance
+  - observer effect
+  - probe effect
+  - measurement semantics
+  - conformance
+authors:
+  - family-names: "Abak"
+    given-names: "Ali Toygar"
+    affiliation: "Phionyx"
+references:
+  - type: article
+    title: >-
+      Access Is Not Yet Verifiability: Toward a Claim-Preserving Evidence Contract
+      for AI Assurance
+    authors:
+      - family-names: "Abak"
+        given-names: "Ali Toygar"
+        affiliation: "Phionyx"
+    notes: >-
+      Position paper providing the conceptual motivation for this profile. It is
+      not normative specification text.

@@ -1,0 +1,24 @@
+# Claim Preservation Profile v0.1 — local candidate integrity manifest
+#
+# WHAT THIS MANIFEST RECORDS
+#   The exact bytes of the two normative v0.1 artifacts listed below, as they
+#   stand in this local candidate. It records those bytes; it does not freeze them. Verify with:
+#       cd spec/v0.1 && sha256sum -c CHECKSUMS.sha256
+#
+# WHAT THIS DOES NOT FREEZE, CLAIM, OR ESTABLISH
+#   - This is NOT a release, NOT a frozen version, and NOT a published artifact.
+#     No tag, no release, no DOI, nothing pushed. The profile remains EXPERIMENTAL
+#     and may change without a compatibility guarantee.
+#   - Integrity is not truth (CPP-8). A matching digest establishes that these
+#     bytes are the bytes recorded here. It establishes nothing about whether the
+#     profile is correct, complete, sound, reviewed, or fit for any purpose.
+#   - This manifest covers only the two files named below. It does not cover the
+#     conformance fixtures, the fixture schemas, the validator, the tests, or any
+#     repository document. Those change independently and are not pinned here.
+#   - The manifest is unsigned. It carries no key attribution and no timestamp
+#     authority, so it cannot establish who produced it or when.
+#   - It says nothing about any other version of the profile, past or future.
+#
+# Generated as part of the v0.1 local candidate on 2026-09-14 (UTC).
+654df8fe7858ba392a3c774ef34557090c09e2a567b69762f057c699a5c1fa23  CLAIM_PRESERVATION_PROFILE.md
+11bf0f336ec70396bd7e0255d29487c8e157de2b2bdd1f4289f9abbc580a004c  claim-preservation-result.schema.json

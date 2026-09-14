@@ -1,0 +1,387 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://phionyx.ai/schemas/cpp/v0.1/claim-preservation-result.schema.json",
+  "title": "CPP v0.1 Claim-Preservation Result",
+  "description": "Machine-readable result of evaluating one claim transformation against the Claim Preservation Profile v0.1. The result is a statement about claim-preservation behaviour only. It is not a statement that the underlying system is safe, correct, aligned, or compliant, and it is not a statement that the recorded facts are true.",
+  "type": "object",
+  "required": [
+    "cpp_version",
+    "case_id",
+    "relation",
+    "input_claim_ref",
+    "output_claim_ref",
+    "dimensions",
+    "added_evidence",
+    "violations",
+    "observer_effect",
+    "qualifications",
+    "non_claims",
+    "evidence_refs",
+    "basis"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "relation": {
+      "description": "Claim-relation vocabulary of CPP v0.1 section 4. NOT_MEASURED, INCONCLUSIVE and ERROR are non-success states and MUST NOT be read as passing, equivalent, or narrower.",
+      "enum": [
+        "EQUIVALENT",
+        "NARROWER",
+        "SUPPORTED_STRENGTHENING",
+        "AMPLIFIED_UNSUPPORTED",
+        "INCOMPARABLE",
+        "NOT_MEASURED",
+        "INCONCLUSIVE",
+        "ERROR"
+      ]
+    },
+    "passing_relation": {
+      "description": "The subset of relations that may be treated as claim-preserving. Provided so implementations do not each invent their own passing set.",
+      "enum": [
+        "EQUIVALENT",
+        "NARROWER",
+        "SUPPORTED_STRENGTHENING"
+      ]
+    },
+    "measurement_state": {
+      "description": "Whether a dimension was actually measured. Absence of measurement is never a positive result.",
+      "enum": [
+        "MEASURED",
+        "BOUNDED",
+        "NOT_MEASURED",
+        "INCONCLUSIVE",
+        "NOT_APPLICABLE",
+        "ERROR"
+      ]
+    },
+    "requirement_id": {
+      "type": "string",
+      "pattern": "^CPP-(?:[1-9]|1[0-9]|20)$"
+    },
+    "evidence_ref": {
+      "type": "object",
+      "required": ["ref"],
+      "additionalProperties": true,
+      "properties": {
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable identifier of the evidence artifact."
+        },
+        "digest": {
+          "type": ["string", "null"],
+          "description": "Content digest of the artifact as retrieved, or null if not retrieved."
+        },
+        "resolved": {
+          "type": ["boolean", "null"],
+          "description": "Whether the reference was actually dereferenced. null means unknown."
+        },
+        "verified": {
+          "type": ["boolean", "null"],
+          "description": "Whether the artifact was verified. Per CPP-7 an unfetched, unfetchable, redacted, or unverified artifact MUST NOT be reported as verified. null means unknown, not verified."
+        },
+        "assurance": {
+          "description": "How the artifact is attested. Per CPP-8, integrity attributes do not establish the truth of the recorded fact.",
+          "enum": [
+            "SELF_ASSERTED",
+            "SAME_PROCESS_CHECKED",
+            "INTEGRITY_CHECKED",
+            "KEY_ATTRIBUTED",
+            "INDEPENDENT_OBSERVER",
+            "INDEPENDENT_REPLAY",
+            "UNKNOWN"
+          ]
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "dimension_result": {
+      "type": "object",
+      "description": "Result for one independent strength dimension. Dimensions are evaluated separately and are NOT combined into a single scalar claim-strength score; the model is a partial order (CPP v0.1 section 2 and 5).",
+      "required": ["status", "measurement_state"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "description": "Direction of change on this dimension, using the same vocabulary as the overall relation.",
+          "$ref": "#/$defs/relation"
+        },
+        "measurement_state": { "$ref": "#/$defs/measurement_state" },
+        "input_value": { "description": "Dimension value of the input claim, if represented.", "type": ["string", "number", "array", "object", "null"] },
+        "output_value": { "description": "Dimension value of the output claim, if represented.", "type": ["string", "number", "array", "object", "null"] },
+        "supporting_evidence": {
+          "description": "Evidence relied on for this dimension. MUST be non-empty when status is SUPPORTED_STRENGTHENING.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_ref" }
+        },
+        "qualification": {
+          "description": "What limits this dimension result. Free text intended to be shown wherever the result is shown (CPP-20).",
+          "type": ["string", "null"]
+        },
+        "violations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/requirement_id" },
+          "uniqueItems": true
+        },
+        "basis": {
+          "description": "The exact rule or heuristic that produced this dimension result, so the result is auditable.",
+          "type": ["string", "null"]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "SUPPORTED_STRENGTHENING" } }, "required": ["status"] },
+          "then": {
+            "required": ["supporting_evidence"],
+            "properties": { "supporting_evidence": { "minItems": 1 } }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "enum": ["NOT_MEASURED", "INCONCLUSIVE", "ERROR"] } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "measurement_state": { "enum": ["NOT_MEASURED", "INCONCLUSIVE", "ERROR"] }
+            }
+          }
+        },
+        {
+          "description": "The converse: a dimension that was not measured, was inconclusive, or errored must not carry a claim-preserving status. Without this, a result could report EQUIVALENT on every dimension while having measured none of them.",
+          "if": {
+            "properties": { "measurement_state": { "enum": ["NOT_MEASURED", "INCONCLUSIVE", "ERROR"] } },
+            "required": ["measurement_state"]
+          },
+          "then": {
+            "properties": {
+              "status": { "enum": ["NOT_MEASURED", "INCONCLUSIVE", "ERROR"] }
+            }
+          }
+        }
+      ]
+    },
+    "violation": {
+      "type": "object",
+      "required": ["requirement", "detail"],
+      "additionalProperties": false,
+      "properties": {
+        "requirement": { "$ref": "#/$defs/requirement_id" },
+        "dimension": { "type": ["string", "null"] },
+        "detail": { "type": "string", "minLength": 1 },
+        "evidence_refs": { "type": "array", "items": { "type": "string" } },
+        "severity": { "enum": ["MUST", "MUST_NOT", "SHOULD", "ADVISORY"] }
+      }
+    }
+  },
+  "properties": {
+    "cpp_version": {
+      "description": "Version of the Claim Preservation Profile this result was produced against.",
+      "type": "string",
+      "const": "0.1"
+    },
+    "case_id": {
+      "description": "Identifier of the evaluated transformation case or fixture.",
+      "type": "string",
+      "minLength": 1
+    },
+    "relation": {
+      "description": "Overall claim relation between input and output. This is a summary of the dimension results and MUST NOT be more favourable than the dimensions support. If any evaluated dimension is AMPLIFIED_UNSUPPORTED, the overall relation MUST be AMPLIFIED_UNSUPPORTED or INCOMPARABLE, never a passing relation.",
+      "$ref": "#/$defs/relation"
+    },
+    "input_claim_ref": {
+      "description": "Reference to the input claim C_in. Required for provenance continuity (CPP-6).",
+      "type": "string",
+      "minLength": 1
+    },
+    "output_claim_ref": {
+      "description": "Reference to the output claim C_out.",
+      "type": "string",
+      "minLength": 1
+    },
+    "dimensions": {
+      "description": "Per-dimension results. Keys are dimension names; CPP v0.1 section 5 lists the dimensions an implementation SHOULD evaluate. Dimensions are kept separate on purpose: no scalar collapse.",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/dimension_result" }
+    },
+    "added_evidence": {
+      "description": "Evidence introduced by this transformation, as distinct from evidence inherited from the input claim. Strengthening is only supportable by evidence listed here (CPP-1).",
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidence_ref" }
+    },
+    "violations": {
+      "description": "CPP requirements violated by this transformation. Empty array means no violation was detected by the evaluated checks; it does not mean every requirement was checked. See dimensions[].measurement_state and coverage.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/violation" }
+    },
+    "observer_effect": {
+      "description": "Observer/probe-effect assessment (CPP-15, CPP-16, CPP-17). Required even when nothing was measured; in that case the states say so explicitly.",
+      "type": "object",
+      "required": ["subject_awareness", "execution_interference"],
+      "additionalProperties": false,
+      "properties": {
+        "subject_awareness": {
+          "description": "Whether the observed system can detect that it is under evaluation or observation.",
+          "enum": ["YES", "NO", "UNKNOWN", "NOT_MEASURED"]
+        },
+        "execution_interference": {
+          "enum": ["NONE_OBSERVED", "MEASURED", "BOUNDED", "INCONCLUSIVE", "NOT_MEASURED"]
+        },
+        "critical_path": { "enum": ["true", "false", "unknown", true, false] },
+        "evidence_write_in_path": { "enum": ["true", "false", "unknown", true, false] },
+        "observer_is_intervention": {
+          "description": "True when the observing component also changes policy, control state, permissions, or model context (CPP-16).",
+          "enum": ["true", "false", "unknown", true, false]
+        },
+        "comparator": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": {
+            "kind": { "enum": ["NONE", "UNINSTRUMENTED", "LOWER_INTRUSION", "SHADOW", "REPLAY"] },
+            "reference": { "type": ["string", "null"] }
+          }
+        },
+        "measured_overhead": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "latency_delta": { "type": ["number", "string", "null"] },
+            "throughput_delta": { "type": ["number", "string", "null"] },
+            "resource_delta": { "type": ["object", "null"] }
+          }
+        },
+        "perturbation_nonclaims": {
+          "description": "What the observation cannot establish because of the way it was observed.",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "generalizes_to_uninstrumented": {
+          "description": "Whether the result may be generalized to the uninstrumented condition. MUST NOT be YES when execution_interference is NOT_MEASURED or INCONCLUSIVE (CPP-15).",
+          "enum": ["YES", "NO", "UNKNOWN", "NOT_MEASURED"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "execution_interference": { "enum": ["NOT_MEASURED", "INCONCLUSIVE"] } },
+            "required": ["execution_interference"]
+          },
+          "then": {
+            "properties": { "generalizes_to_uninstrumented": { "enum": ["NO", "UNKNOWN", "NOT_MEASURED"] } }
+          }
+        }
+      ]
+    },
+    "qualifications": {
+      "description": "Material qualifications that constrain the output claim. Per CPP-20 these MUST travel with the result wherever it is displayed or exported.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "non_claims": {
+      "description": "What this result explicitly does not establish. Per CPP-4 an empty array is not a discharge of the input claim's non-claims; discharge must be recorded in violations or in added_evidence.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "evidence_refs": {
+      "description": "All evidence referenced by the output claim, inherited and added.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidence_ref" }
+    },
+    "basis": {
+      "description": "The exact, pinned basis of this evaluation (CPP-13). A moving reference such as 'latest' does not support a reproducibility claim.",
+      "type": "object",
+      "required": ["profile_version", "evaluator", "pinned"],
+      "additionalProperties": false,
+      "properties": {
+        "profile_version": { "type": "string", "minLength": 1 },
+        "profile_digest": { "type": ["string", "null"] },
+        "evaluator": { "type": "string", "minLength": 1, "description": "Evaluator identity and version." },
+        "ruleset_version": { "type": ["string", "null"] },
+        "pinned": {
+          "description": "False when any input of the evaluation was a moving reference. A frozen reproducibility claim MUST NOT be made when this is false.",
+          "type": "boolean"
+        },
+        "references": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "coverage": {
+      "description": "Which CPP requirements this evaluation actually examined. Requirements absent from 'evaluated' were not checked and MUST NOT be reported as satisfied.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "evaluated": { "type": "array", "items": { "$ref": "#/$defs/requirement_id" }, "uniqueItems": true },
+        "not_evaluated": { "type": "array", "items": { "$ref": "#/$defs/requirement_id" }, "uniqueItems": true },
+        "not_applicable": { "type": "array", "items": { "$ref": "#/$defs/requirement_id" }, "uniqueItems": true }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "allOf": [
+    {
+      "description": "A non-empty violation list can never accompany a passing relation.",
+      "if": {
+        "properties": { "violations": { "minItems": 1 } },
+        "required": ["violations"]
+      },
+      "then": {
+        "properties": {
+          "relation": { "enum": ["AMPLIFIED_UNSUPPORTED", "INCOMPARABLE", "ERROR"] }
+        }
+      }
+    },
+    {
+      "description": "Strengthening must be attributable to identifiable added evidence (CPP-1).",
+      "if": {
+        "properties": { "relation": { "const": "SUPPORTED_STRENGTHENING" } },
+        "required": ["relation"]
+      },
+      "then": {
+        "properties": { "added_evidence": { "minItems": 1 } },
+        "required": ["added_evidence"]
+      }
+    },
+    {
+      "description": "An unsupported amplification on any single dimension sinks the overall relation. This enforces the rule stated on the 'relation' property rather than leaving it to prose.",
+      "if": {
+        "not": {
+          "properties": {
+            "dimensions": {
+              "additionalProperties": {
+                "not": {
+                  "properties": { "status": { "const": "AMPLIFIED_UNSUPPORTED" } },
+                  "required": ["status"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": { "relation": { "enum": ["AMPLIFIED_UNSUPPORTED", "INCOMPARABLE", "ERROR"] } }
+      }
+    },
+    {
+      "description": "A dimension that was not measured, was inconclusive, or errored blocks a claim-preserving overall relation. The overall relation may never be more favourable than the dimensions support.",
+      "if": {
+        "not": {
+          "properties": {
+            "dimensions": {
+              "additionalProperties": {
+                "not": {
+                  "properties": {
+                    "measurement_state": { "enum": ["NOT_MEASURED", "INCONCLUSIVE", "ERROR"] }
+                  },
+                  "required": ["measurement_state"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "relation": {
+            "enum": ["AMPLIFIED_UNSUPPORTED", "INCOMPARABLE", "NOT_MEASURED", "INCONCLUSIVE", "ERROR"]
+          }
+        }
+      }
+    }
+  ]
+}

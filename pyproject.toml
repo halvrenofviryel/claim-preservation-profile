@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claim-preservation-profile"
+version = "0.1.0"
+description = "Experimental specification and conformance corpus for preserving evidence-backed claim scope, qualifications, non-claims, assurance state, and observer validity across AI assurance pipelines."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "CC-BY-4.0 AND Apache-2.0"
+license-files = ["LICENSE", "LICENSE-CODE"]
+authors = [{ name = "Ali Toygar Abak" }]
+keywords = ["claim-preservation", "evidence", "ai-assurance", "observer-effect", "conformance"]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Scientific/Engineering",
+]
+
+# The reference validator is standard library apart from JSON Schema validation.
+# Without `jsonschema`, schema validation cannot be executed and the validator
+# reports the run as incomplete (exit 5) rather than reporting a pass.
+dependencies = ["jsonschema>=4.20,<5"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10"]
+
+[project.urls]
+Documentation = "https://phionyx.ai"
+
+[project.scripts]
+cpp-validate = "validate:main"
+
+[tool.setuptools]
+py-modules = ["validate"]
+
+[tool.setuptools.package-dir]
+"" = "conformance"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
