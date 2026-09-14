@@ -284,6 +284,68 @@ def test_silent_evidence_sink_failure_cannot_produce_positive_assurance(evaluati
     assert evaluation["derived_is_passing"] is False
 
 
+def test_intervention_cannot_be_reported_as_passive_observation(evaluations_by_id):
+    negative = evaluations_by_id["CPP-N21"]
+    positive = evaluations_by_id["CPP-P14"]
+    assert negative["derived_relation"] == "AMPLIFIED_UNSUPPORTED"
+    assert "CPP-16" in negative["derived_violations"]
+    assert positive["derived_relation"] == "EQUIVALENT"
+    assert positive["derived_violations"] == []
+
+
+def test_sampling_loss_cannot_be_reported_as_complete(evaluations_by_id):
+    negative = evaluations_by_id["CPP-N22"]
+    positive = evaluations_by_id["CPP-P15"]
+    assert negative["derived_relation"] == "AMPLIFIED_UNSUPPORTED"
+    assert "CPP-19" in negative["derived_violations"]
+    assert positive["derived_relation"] == "NARROWER"
+    assert positive["derived_violations"] == []
+
+
+def test_unknown_intervention_fields_never_default_to_pass():
+    fx = synth(
+        input={"claim": "x"},
+        output={"claim": "x"},
+        observation_intervention={
+            "observer_role": "INTERVENING",
+            "pre_intervention": {"policy": "P0"},
+            "intervention": {"applied": True},
+            "post_intervention": {"policy": "P1"},
+            "output_attribution": "INTERVENED_CONDITION",
+        },
+    )
+    assert statuses(fx)["observation_intervention_separation"] == "INCONCLUSIVE"
+    assert evaluate_fixture(fx)["derived_is_passing"] is False
+
+    unknown = synth(
+        input={"claim": "x"},
+        output={"claim": "x"},
+        observation_intervention={
+            "observer_role": "INTERVENING",
+            "pre_intervention": {"policy": "P0"},
+            "intervention": {"applied": True, "changes": ["UNKNOWN_CHANGE"]},
+            "post_intervention": {"policy": "P1"},
+            "output_attribution": "INTERVENED_CONDITION",
+        },
+    )
+    assert statuses(unknown)["observation_intervention_separation"] == "INCONCLUSIVE"
+    assert evaluate_fixture(unknown)["derived_is_passing"] is False
+
+
+def test_missing_sampling_metadata_never_defaults_to_pass():
+    fx = synth(
+        input={"claim": "100 observed"},
+        output={"claim": "80 retained"},
+        sampling_accounting={
+            "observed_population": 100,
+            "retained_population": 80,
+            "output_population_claim": "BOUNDED_TO_RETAINED",
+        },
+    )
+    assert statuses(fx)["sampling_loss_accounting"] == "INCONCLUSIVE"
+    assert evaluate_fixture(fx)["derived_is_passing"] is False
+
+
 # --- non-success states may not collapse ---------------------------------
 
 
@@ -472,6 +534,29 @@ def test_mutating_the_denominator_rule_loses_a_detection(negative_fixtures):
     mutated_checks = tuple(weakened if c is validate.check_denominator else c for c in CHECKS)
     mutant = evaluate_fixture(n09, checks=mutated_checks)
     assert "CPP-11" not in mutant["derived_violations"]
+    assert mutant["derived_relation"] in PASSING_RELATIONS
+
+
+@pytest.mark.parametrize(
+    ("case_id", "requirement", "removed_check"),
+    [
+        ("CPP-N21", "CPP-16", validate.check_observation_intervention),
+        ("CPP-N22", "CPP-19", validate.check_sampling_accounting),
+    ],
+)
+def test_removing_new_hardening_rule_loses_its_detection(
+    negative_fixtures, case_id, requirement, removed_check
+):
+    """The two new rules are load-bearing: remove either one and its paired
+    negative incorrectly crosses onto the passing side."""
+    fixture = Fixture(next(f for f in negative_fixtures if f["id"] == case_id), "negative")
+    baseline = evaluate_fixture(fixture)
+    assert baseline["derived_relation"] == "AMPLIFIED_UNSUPPORTED"
+    assert requirement in baseline["derived_violations"]
+
+    mutated_checks = tuple(check for check in CHECKS if check is not removed_check)
+    mutant = evaluate_fixture(fixture, checks=mutated_checks)
+    assert requirement not in mutant["derived_violations"]
     assert mutant["derived_relation"] in PASSING_RELATIONS
 
 

@@ -9,7 +9,6 @@ abstract: >-
   reproduced, not deployed.
 type: software
 version: "0.1.0"
-date-released: "2026-09-14"
 license:
   - CC-BY-4.0
   - Apache-2.0
@@ -26,6 +25,7 @@ authors:
   - family-names: "Abak"
     given-names: "Ali Toygar"
     affiliation: "Phionyx"
+    orcid: "https://orcid.org/0009-0002-3718-4010"
 references:
   - type: article
     title: >-
@@ -35,6 +35,10 @@ references:
       - family-names: "Abak"
         given-names: "Ali Toygar"
         affiliation: "Phionyx"
+        orcid: "https://orcid.org/0009-0002-3718-4010"
+    date-published: "2026-09-13"
+    doi: "10.5281/zenodo.22754297"
+    url: "https://huggingface.co/blog/phionyx/access-is-not-yet-verifiability"
     notes: >-
       Position paper providing the conceptual motivation for this profile. It is
       not normative specification text.

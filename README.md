@@ -65,13 +65,14 @@ downstream transformation — which is what this profile proposes.
 | [`spec/v0.1/CLAIM_PRESERVATION_PROFILE.md`](spec/v0.1/CLAIM_PRESERVATION_PROFILE.md) | The profile: claim model, relation vocabulary, twenty normative requirements (CPP-1 … CPP-20), observer/probe-effect extension. |
 | [`spec/v0.1/claim-preservation-result.schema.json`](spec/v0.1/claim-preservation-result.schema.json) | Machine-readable result schema. Keeps dimensions separate; blocks passing relations that carry violations. |
 | [`spec/v0.1/CHECKSUMS.sha256`](spec/v0.1/CHECKSUMS.sha256) | Local candidate integrity manifest for the two files above. |
-| [`conformance/negative-fixtures.json`](conformance/negative-fixtures.json) | 20 negative cases, copied unmodified from the v0.1 seed bundle. |
-| [`conformance/positive-fixtures.json`](conformance/positive-fixtures.json) | 13 positive controls. Eleven are paired with a negative case and name the fact the pairing turns on; the validator separates eight of those pairs mechanically, and the other three say plainly that it cannot. |
+| [`conformance/negative-fixtures.json`](conformance/negative-fixtures.json) | The original 20 negative cases plus two hardening cases for CPP-16 and CPP-19. Four loose requirement attributions in the original set are corrected without changing their expected relations. |
+| [`conformance/positive-fixtures.json`](conformance/positive-fixtures.json) | 15 positive controls. Thirteen are paired with a negative case and name the fact the pairing turns on; the validator separates ten of those pairs mechanically, and the other three say plainly that it cannot. |
 | [`conformance/fixture.schema.json`](conformance/fixture.schema.json) | Common fixture schema, with backwards-compatible aliases for the seed corpus's field names. |
 | [`conformance/negative-fixture.schema.json`](conformance/negative-fixture.schema.json) | The original seed schema, kept so the seed corpus keeps validating against what it was written for. |
 | [`conformance/validate.py`](conformance/validate.py) | Reference validator. Offline, deterministic, no semantic guessing. |
 | [`tests/`](tests) | Conformance tests, including mutation tests over load-bearing validator rules. |
 | [`research/PRIOR_ART_AND_SCOPE.md`](research/PRIOR_ART_AND_SCOPE.md) | What CPP does not claim to invent, and the bounded contribution it does claim. |
+| [`research/CROSS_PROJECT_CONSISTENCY_AUDIT.md`](research/CROSS_PROJECT_CONSISTENCY_AUDIT.md) | Pinned-source audit of every CPP characterization of AIREP, Measurement Axioms, CDE-12, and draft-abak. |
 
 ## A worked example of unsupported amplification
 
@@ -150,27 +151,36 @@ are observed.
 
 ## Relationship to existing Phionyx work
 
-CPP generalizes and connects ideas explored elsewhere in the Phionyx research
-program. It does not alter any of them, and is not a component of any of them.
+CPP draws on ideas explored elsewhere in the Phionyx research program. It does not
+alter any of them and is not a component of any of them.
 
-**AIREP** contributes explicit claim scope, evidence references, and `does_not_cover`.
-CPP is not an AIREP profile at this stage and does not change AIREP conformance.
+**AIREP v0.1/v0.2** provide explicit scope and `does_not_cover`; v0.1 also defines
+evidence-reference resolvability and an integrity-not-truth boundary, while v0.2
+adds stage-specific artifact families and references. CPP is not an AIREP profile
+and does not change AIREP conformance.
 
-**Measurement Axioms** separates measurement from non-measurement states and forbids
-collapsing non-execution, uncertainty and error into positive assurance. CPP
-generalizes the preservation of those distinctions across downstream transformations.
-CPP does not modify Measurement Axioms v1.0. The reference validator follows the same
-principle in its own design: a valid run and a positive measurement are different
-facts, and its exit code reports only the former.
+**Measurement Axioms v1.0** keeps `NOT_MEASURED`, `INCONCLUSIVE`, and `ERROR`
+distinct from positive outcomes and separates measurement, decision, execution,
+enforcement, and evidence states. Its frozen v1.0 text does not define CPP's
+observer-validity/probe-effect model. CPP does not modify it. The reference
+validator follows the narrower shared principle that a valid run and a positive
+measurement are different facts.
 
-**CDE-12** measures what a reader can establish from a set of records. CPP asks the
-next question: whether those bounded conclusions remain bounded once they are
-transformed downstream. CPP does not modify CDE-12.
+**CDE-12 v0.2** is a record-focused measurement instrument: it bounds what a reader
+can establish, records evidence tiers, distinguishes `not tested` from `not
+demonstrated`, and separates delivery, enforcement, effect, authority, and bounded
+negative records in C8–C12. CPP asks whether such bounded conclusions remain
+bounded downstream; it does not modify CDE-12.
 
-**draft-abak** addresses control-delivery evidence, claim-support qualification, and
-intermediary semantic preservation. CPP generalizes semantic preservation beyond
-control delivery to broader AI assurance pipelines. **CPP is not IETF work and
-implies no IETF review, adoption, or endorsement.**
+The published individual Internet-Draft **draft-abak-01** proposes separate
+structural and claim-support results, scope/non-claim qualification, delivery/effect
+separation, and intermediary semantic preservation. CPP applies a similar
+preservation question to broader AI assurance transformations. **CPP is not IETF
+work; this reference implies no IETF or working-group review, adoption, consensus,
+or endorsement.**
+
+The exact source commits and statement-by-statement classifications are in
+[`research/CROSS_PROJECT_CONSISTENCY_AUDIT.md`](research/CROSS_PROJECT_CONSISTENCY_AUDIT.md).
 
 The position paper *Access Is Not Yet Verifiability: Toward a Claim-Preserving
 Evidence Contract for AI Assurance* is the conceptual motivation for this work. It
@@ -194,19 +204,20 @@ machine-readable status block. In particular, CPP does **not** claim:
 - that provenance establishes causality;
 - to have solved natural-language semantic entailment. The reference validator
   decides only what the structured fields decide, and reports `NOT_MEASURED` or
-  `INCONCLUSIVE` everywhere else. Six of the twenty negative cases are undecidable
+  `INCONCLUSIVE` everywhere else. Six of the twenty-two negative cases are undecidable
   by it, and it says so.
 
 The conformance fixtures are author-created research artifacts, not independent
 empirical validation.
 
-Two limits of the corpus are worth stating plainly rather than leaving for a reader
-to discover. **CPP-16** (observation/intervention separation) and **CPP-19**
-(sampling and loss accounting) are stated in the profile but exercised by no fixture
-and implemented by no check, so nothing here demonstrates them. And a handful of
-violation attributions in the seed negative corpus are looser than the fixture data
-supports; they are kept unmodified and listed in
-[`research/PRIOR_ART_AND_SCOPE.md`](research/PRIOR_ART_AND_SCOPE.md#6-known-looseness-in-the-seed-negative-corpus).
+The corpus now exercises **CPP-16** (observation/intervention separation) and
+**CPP-19** (sampling and loss accounting) with structured negative/positive
+near-neighbour pairs and load-bearing validator checks. This demonstrates internal
+mechanical discrimination only, not independent validation or deployment fitness.
+Four loose requirement attributions in the original negative set are corrected in
+this hardening branch; the expected relation of every case remains unchanged. The
+correction record is in
+[`research/PRIOR_ART_AND_SCOPE.md`](research/PRIOR_ART_AND_SCOPE.md#6-corrections-to-original-negative-fixture-attributions).
 
 ## Verification
 

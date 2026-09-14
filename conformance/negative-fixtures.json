@@ -28,8 +28,7 @@
     "expected_relation": "AMPLIFIED_UNSUPPORTED",
     "violates": [
       "CPP-1",
-      "CPP-2",
-      "CPP-13"
+      "CPP-2"
     ]
   },
   {
@@ -81,8 +80,7 @@
     "bad_output_nonclaims": [],
     "expected_relation": "AMPLIFIED_UNSUPPORTED",
     "violates": [
-      "CPP-4",
-      "CPP-20"
+      "CPP-4"
     ]
   },
   {
@@ -208,8 +206,7 @@
     "bad_output_claim": "This result is reproducible against the exact specification used.",
     "expected_relation": "AMPLIFIED_UNSUPPORTED",
     "violates": [
-      "CPP-13",
-      "CPP-6"
+      "CPP-13"
     ]
   },
   {
@@ -240,8 +237,7 @@
     "bad_output_claim": "The uninstrumented runtime has a 12% timeout rate.",
     "expected_relation": "AMPLIFIED_UNSUPPORTED",
     "violates": [
-      "CPP-15",
-      "CPP-20"
+      "CPP-15"
     ]
   },
   {
@@ -273,5 +269,79 @@
       "CPP-18",
       "CPP-5"
     ]
+  },
+  {
+    "id": "CPP-N21",
+    "name": "intervention_reported_as_passive_observation",
+    "description": "The observer changes policy and execution permissions, then presents the resulting completion as a passive independent observation.",
+    "input": {
+      "claim": "Before observation, policy P0 denied operation A.",
+      "status": "MEASURED",
+      "qualifiers": ["condition=pre-intervention"],
+      "non_claims": ["Does not establish behaviour after policy or permission changes."],
+      "assurance": "INDEPENDENT_OBSERVER",
+      "basis": "observer@sha256:16c0de"
+    },
+    "transformation": {
+      "kind": "observe-and-control",
+      "description": "The observer replaces P0 with P1 and grants execution permission before recording the result.",
+      "preserves_distinctions": false
+    },
+    "output": {
+      "claim": "Operation A was independently and passively observed to complete under policy P0.",
+      "status": "MEASURED",
+      "qualifiers": ["condition=pre-intervention"],
+      "non_claims": ["Does not establish behaviour after policy or permission changes."],
+      "assurance": "INDEPENDENT_OBSERVER",
+      "basis": "observer@sha256:16c0de"
+    },
+    "added_evidence": [],
+    "observation_intervention": {
+      "observer_role": "INTERVENING",
+      "pre_intervention": { "policy": "P0", "execution_permission": "DENY" },
+      "intervention": {
+        "applied": true,
+        "changes": ["policy", "execution_permissions"],
+        "description": "Replaced P0 with P1 and changed execution permission from DENY to ALLOW."
+      },
+      "post_intervention": { "policy": "P1", "execution_permission": "ALLOW", "operation": "COMPLETED" },
+      "output_attribution": "PASSIVE_OBSERVATION"
+    },
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": ["CPP-16"]
+  },
+  {
+    "id": "CPP-N22",
+    "name": "sampled_population_reported_as_complete",
+    "description": "The pipeline retains 80 of 100 observed events but reports the retained set as the complete population without a sampling rule or loss metadata.",
+    "input": {
+      "claim": "One hundred events entered the evidence pipeline.",
+      "status": "MEASURED",
+      "qualifiers": ["observed_population=100"],
+      "non_claims": ["Does not establish that every observed event was retained."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "collector@sha256:19acc0"
+    },
+    "transformation": {
+      "kind": "sample",
+      "description": "Retain 80 events and omit the sampling rule and loss account.",
+      "preserves_distinctions": false
+    },
+    "output": {
+      "claim": "The complete event population contains 80 events.",
+      "status": "MEASURED",
+      "qualifiers": ["observed_population=100"],
+      "non_claims": ["Does not establish that every observed event was retained."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "collector@sha256:19acc0"
+    },
+    "added_evidence": [],
+    "sampling_accounting": {
+      "observed_population": 100,
+      "retained_population": 80,
+      "output_population_claim": "COMPLETE"
+    },
+    "expected_relation": "AMPLIFIED_UNSUPPORTED",
+    "violates": ["CPP-19"]
   }
 ]

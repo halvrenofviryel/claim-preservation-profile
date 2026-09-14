@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://phionyx.ai/schemas/cpp/v0.1/fixture.schema.json",
   "title": "CPP v0.1 Conformance Fixture (common)",
-  "description": "Common shape for both positive and negative Claim Preservation Profile conformance fixtures. The v0.1 negative corpus was authored before this schema existed and uses a flat field layout; those field names are retained here as backwards-compatible aliases rather than rewritten, so the supplied negative fixtures validate unchanged. New fixtures SHOULD use the canonical nested layout (input / transformation / output).",
+  "description": "Common shape for both positive and negative Claim Preservation Profile conformance fixtures. The original v0.1 negative cases use a flat field layout; those field names remain as backwards-compatible aliases. Hardening cases and positive fixtures SHOULD use the canonical nested layout (input / transformation / output).",
   "type": "object",
   "required": ["id", "name", "expected_relation"],
   "additionalProperties": false,
@@ -132,6 +132,54 @@
         "generalizes_to_uninstrumented": { "enum": ["YES", "NO", "UNKNOWN", "NOT_MEASURED"] },
         "perturbation_nonclaims": { "type": "array", "items": { "type": "string" } }
       }
+    },
+    "observation_intervention": {
+      "type": "object",
+      "description": "Structured CPP-16 record separating pre-intervention facts, the observer's intervention, and post-intervention observations.",
+      "required": [
+        "observer_role",
+        "pre_intervention",
+        "intervention",
+        "post_intervention",
+        "output_attribution"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "observer_role": { "enum": ["PASSIVE", "INTERVENING"] },
+        "pre_intervention": { "type": "object", "minProperties": 1, "additionalProperties": true },
+        "intervention": {
+          "type": "object",
+          "required": ["applied", "changes"],
+          "additionalProperties": false,
+          "properties": {
+            "applied": { "type": "boolean" },
+            "changes": {
+              "type": "array",
+              "items": {
+                "enum": ["policy", "control_state", "execution_permissions", "model_context"]
+              },
+              "uniqueItems": true
+            },
+            "description": { "type": "string", "minLength": 1 }
+          }
+        },
+        "post_intervention": { "type": "object", "minProperties": 1, "additionalProperties": true },
+        "output_attribution": { "enum": ["PASSIVE_OBSERVATION", "INTERVENED_CONDITION"] }
+      }
+    },
+    "sampling_accounting": {
+      "type": "object",
+      "description": "Structured CPP-19 accounting for an observed stream, the retained subset, and what completeness the output claims.",
+      "required": ["observed_population", "retained_population", "output_population_claim"],
+      "additionalProperties": false,
+      "properties": {
+        "observed_population": { "type": "integer", "minimum": 0 },
+        "retained_population": { "type": "integer", "minimum": 0 },
+        "dropped_population": { "type": "integer", "minimum": 0 },
+        "sampling_rule": { "type": "string", "minLength": 1 },
+        "loss_metadata": { "type": "object", "minProperties": 1, "additionalProperties": true },
+        "output_population_claim": { "enum": ["COMPLETE", "BOUNDED_TO_RETAINED", "UNKNOWN"] }
+      }
     }
   },
   "properties": {
@@ -175,6 +223,8 @@
     "expected_relation": { "$ref": "#/$defs/relation" },
     "expected_violations": { "$ref": "#/$defs/requirement_list" },
     "observer_effect": { "$ref": "#/$defs/observer_effect" },
+    "observation_intervention": { "$ref": "#/$defs/observation_intervention" },
+    "sampling_accounting": { "$ref": "#/$defs/sampling_accounting" },
 
     "violates": {
       "description": "Backwards-compatible alias of expected_violations, as used by the supplied v0.1 negative corpus.",

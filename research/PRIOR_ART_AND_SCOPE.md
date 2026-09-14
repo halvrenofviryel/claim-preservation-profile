@@ -67,6 +67,15 @@ rather than as a matter of good drafting at the final report.
 Whether that framing is itself novel is not settled here. It is a candidate
 contribution, offered for review.
 
+### Priority distinctions
+
+| Question | CPP's claim |
+| --- | --- |
+| Exact-phrase priority | Not established. Section 3 records only a bounded search observation. |
+| Concept priority | Not claimed. The component concepts and failure modes have extensive prior art. |
+| Combination novelty | A candidate contribution, not an established novelty finding. |
+| Established prior art | The concepts listed in section 1 are treated as prior art and are not claimed as inventions. |
+
 ## 3. Search observation on one phrase
 
 > No earlier indexed public use has yet been identified by the authors for the exact
@@ -130,17 +139,16 @@ reference validator explicitly does not attempt it, and reports `NOT_MEASURED` o
 
 **Relationship boundaries.** CPP v0.1 does not modify AIREP, Measurement Axioms
 v1.0, CDE-12, or the draft-abak IETF work area, is not a component or profile of any
-of them, and carries no implication of IETF review, adoption or endorsement. It may
-describe how it generalizes or connects ideas explored in those bodies of work; it
-may not retroactively alter them.
+of them, and carries no implication of IETF or working-group review, adoption,
+consensus, or endorsement. The specific source-supported relationships and their
+limits are recorded in [`CROSS_PROJECT_CONSISTENCY_AUDIT.md`](CROSS_PROJECT_CONSISTENCY_AUDIT.md).
 
-## 6. Known looseness in the seed negative corpus
+## 6. Corrections to original negative-fixture attributions
 
-The twenty negative fixtures are kept byte-for-byte as supplied, so the following
-are recorded here rather than corrected in place. In each case the fixture's
-*expected relation* is right — the transformation is an unsupported amplification —
-but one of the requirement identifiers it names does not follow from the fixture's
-own data.
+The public baseline preserved the original twenty negative fixtures byte-for-byte.
+This hardening branch corrects four loose requirement attributions in place while
+leaving every fixture's *expected relation* unchanged. The baseline remains intact
+on `main` and in commit `e5961ab2c54a2ade57bd2901131006480ed7b750`.
 
 - **CPP-N02 → CPP-13.** The fixture's data is `input_scope: {"time_window": "T1"}`
   and an output claiming current health. CPP-13 is about identifying the exact
@@ -162,21 +170,21 @@ own data.
   does not apply; the first clause arguably does. CPP-4, also named, is the primary
   and sufficient attribution.
 
-The reference validator derives its own violation identifiers independently and does
-not inherit these attributions. Its reconciliation step reports agreement on the
-*relation*, and lists declared identifiers it did not derive as informational rather
-than as a discrepancy — which is why these four do not cause a test to fail. They
-would be candidates for correction in a future version of the corpus, under a
-versioned process rather than by editing v0.1 in place.
+The corrections are: N02 removes CPP-13 and retains CPP-1/CPP-2; N06 removes CPP-20
+and retains CPP-4; N16 removes CPP-6 and retains CPP-13; N18 removes CPP-20 and
+retains CPP-15. Tests pin these exact attributions and the unchanged
+`AMPLIFIED_UNSUPPORTED` relations.
 
-Two requirements are also **exercised by nothing** in this repository: CPP-16
-(observation/intervention separation) and CPP-19 (sampling and loss accounting) have
-no fixture and no validator check. They are proposed, not demonstrated.
+CPP-16 and CPP-19 are now exercised by structured negative/positive near-neighbour
+pairs (`CPP-N21`/`CPP-P14` and `CPP-N22`/`CPP-P15`) and corresponding validator
+checks. Mutation tests establish that removing either new rule loses its negative
+detection. This is internal mechanical evidence, not independent validation.
 
 ## 7. Provenance of this repository's artifacts
 
-The profile text and the twenty negative fixtures came from a v0.1 seed bundle
-supplied by the author. The negative fixtures were copied byte-for-byte. Five
+The profile text and the original twenty negative fixtures came from a v0.1 seed
+bundle supplied by the author. Their exact public baseline bytes remain available
+at commit `e5961ab2c54a2ade57bd2901131006480ed7b750`. Five
 explicit, substantive corrections were made to the profile text and every one of
 them is listed in [`../CHANGELOG.md`](../CHANGELOG.md). Everything else in this
 repository — the result schema, the common fixture schema, the positive controls,

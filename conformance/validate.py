@@ -55,7 +55,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 CPP_VERSION = "0.1"
-VALIDATOR_VERSION = "0.1.0"
+VALIDATOR_VERSION = "0.1.1"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_SPEC = REPO_ROOT / "spec" / "v0.1" / "CLAIM_PRESERVATION_PROFILE.md"
@@ -260,6 +260,8 @@ class Fixture:
 
         self.added_evidence = _evidence_items(data.get("added_evidence"))
         self.observer_effect = data.get("observer_effect") or {}
+        self.observation_intervention = data.get("observation_intervention") or {}
+        self.sampling_accounting = data.get("sampling_accounting") or {}
         self.observer = data.get("observer") or {}
         self.baseline = data.get("baseline") or {}
         self.instrumented = data.get("instrumented") or {}
@@ -868,6 +870,223 @@ def check_evaluation_awareness(fx: Fixture) -> CheckResult:
     )
 
 
+def check_observation_intervention(fx: Fixture) -> CheckResult:
+    """Mechanically enforce CPP-16 for the structured intervention trace.
+
+    Missing or out-of-vocabulary facts never default to preservation. The common
+    fixture schema rejects them in the corpus; direct API callers receive an
+    undecided result rather than an inferred pass.
+    """
+    name, req = "observation_intervention_separation", ["CPP-16"]
+    trace = fx.observation_intervention
+    if not trace:
+        return _na(name, req, "no structured observation/intervention trace represented")
+    if not isinstance(trace, dict):
+        return CheckResult(name, req, INCONCLUSIVE, "intervention trace is not an object", "CPP-16")
+
+    role = str(trace.get("observer_role", "")).upper()
+    pre = trace.get("pre_intervention")
+    intervention = trace.get("intervention")
+    post = trace.get("post_intervention")
+    attribution = str(trace.get("output_attribution", "")).upper()
+    if role not in {"PASSIVE", "INTERVENING"} or attribution not in {
+        "PASSIVE_OBSERVATION",
+        "INTERVENED_CONDITION",
+    }:
+        return CheckResult(
+            name,
+            req,
+            INCONCLUSIVE,
+            f"observer_role={role or '<missing>'}, output_attribution={attribution or '<missing>'}",
+            "CPP-16 structured vocabulary",
+        )
+    if not isinstance(pre, dict) or not pre or not isinstance(post, dict) or not post:
+        return CheckResult(
+            name,
+            req,
+            INCONCLUSIVE,
+            "pre-intervention or post-intervention state is missing",
+            "CPP-16 requires pre-state, intervention, and post-state separation",
+        )
+    if not isinstance(intervention, dict):
+        return CheckResult(name, req, INCONCLUSIVE, "intervention is not an object", "CPP-16")
+
+    applied = intervention.get("applied")
+    changes = intervention.get("changes")
+    if not isinstance(applied, bool) or not isinstance(changes, list):
+        return CheckResult(
+            name,
+            req,
+            INCONCLUSIVE,
+            "intervention.applied or intervention.changes is missing or malformed",
+            "CPP-16 structured intervention facts",
+        )
+    allowed_changes = {"policy", "control_state", "execution_permissions", "model_context"}
+    unknown_changes = sorted(
+        {str(change) for change in changes if not isinstance(change, str) or change not in allowed_changes}
+    )
+    if unknown_changes:
+        return CheckResult(
+            name,
+            req,
+            INCONCLUSIVE,
+            f"intervention.changes contains unknown values {unknown_changes}",
+            "CPP-16 structured intervention vocabulary",
+        )
+    if applied is False and changes:
+        return CheckResult(
+            name,
+            req,
+            INCONCLUSIVE,
+            f"intervention.applied is false but changes are recorded: {sorted(changes)}",
+            "CPP-16 structured intervention consistency",
+        )
+    changed = applied and bool(changes)
+    if changed and attribution == "PASSIVE_OBSERVATION":
+        return CheckResult(
+            name,
+            req,
+            VIOLATION,
+            f"observer changed {sorted(map(str, changes))} but output attribution is PASSIVE_OBSERVATION",
+            "CPP-16: effects under observer intervention must not be represented as passively observed facts",
+        )
+    if role == "PASSIVE" and changed:
+        return CheckResult(
+            name,
+            req,
+            VIOLATION,
+            f"observer_role is PASSIVE while the recorded intervention changed {sorted(map(str, changes))}",
+            "CPP-16 observer-role consistency",
+        )
+    if role == "INTERVENING" and not changed:
+        return CheckResult(
+            name,
+            req,
+            INCONCLUSIVE,
+            "observer_role is INTERVENING but no applied change is recorded",
+            "CPP-16 structured intervention facts",
+        )
+    if changed and attribution == "INTERVENED_CONDITION":
+        return CheckResult(
+            name,
+            req,
+            PRESERVING,
+            f"pre-state, changes {sorted(map(str, changes))}, and post-state are separated; output is attributed to the intervened condition",
+            "CPP-16 structured intervention trace",
+        )
+    if role == "PASSIVE" and not changed and attribution == "PASSIVE_OBSERVATION":
+        return CheckResult(
+            name,
+            req,
+            PRESERVING,
+            "observer is passive, no applied change is recorded, and output is attributed to passive observation",
+            "CPP-16 structured intervention trace",
+        )
+    return CheckResult(
+        name,
+        req,
+        INCONCLUSIVE,
+        f"role={role}, applied={applied}, changes={changes}, attribution={attribution}",
+        "CPP-16 structured intervention facts",
+    )
+
+
+def check_sampling_accounting(fx: Fixture) -> CheckResult:
+    """Mechanically enforce CPP-19 for structured stream-loss accounting."""
+    name, req = "sampling_loss_accounting", ["CPP-19"]
+    account = fx.sampling_accounting
+    if not account:
+        return _na(name, req, "no structured sampling/loss accounting represented")
+    if not isinstance(account, dict):
+        return CheckResult(name, req, INCONCLUSIVE, "sampling account is not an object", "CPP-19")
+
+    observed = account.get("observed_population")
+    retained = account.get("retained_population")
+    claim = str(account.get("output_population_claim", "")).upper()
+    valid_count = lambda value: isinstance(value, int) and not isinstance(value, bool) and value >= 0
+    if not valid_count(observed) or not valid_count(retained):
+        return CheckResult(
+            name,
+            req,
+            INCONCLUSIVE,
+            f"observed_population={observed!r}, retained_population={retained!r}",
+            "CPP-19 requires explicit non-negative population counts",
+        )
+    if claim not in {"COMPLETE", "BOUNDED_TO_RETAINED", "UNKNOWN"}:
+        return CheckResult(
+            name,
+            req,
+            INCONCLUSIVE,
+            f"output_population_claim={claim or '<missing>'}",
+            "CPP-19 structured completeness vocabulary",
+        )
+    if retained > observed:
+        return CheckResult(
+            name,
+            req,
+            VIOLATION,
+            f"retained population {retained} exceeds observed population {observed}",
+            "CPP-19 population conservation",
+        )
+
+    expected_dropped = observed - retained
+    dropped = account.get("dropped_population")
+    if expected_dropped > 0 and claim == "COMPLETE":
+        return CheckResult(
+            name,
+            req,
+            VIOLATION,
+            f"retained {retained} of {observed} events but output_population_claim is COMPLETE; "
+            f"sampling_rule present={bool(account.get('sampling_rule'))}, loss_metadata present={bool(account.get('loss_metadata'))}",
+            "CPP-19: retained evidence must not be reported as a complete population after sampling or loss",
+        )
+    if expected_dropped > 0:
+        exact_loss = valid_count(dropped) and dropped == expected_dropped
+        rule_recorded = isinstance(account.get("sampling_rule"), str) and bool(account["sampling_rule"].strip())
+        loss_recorded = isinstance(account.get("loss_metadata"), dict) and bool(account["loss_metadata"])
+        if claim == "UNKNOWN":
+            return CheckResult(
+                name,
+                req,
+                NOT_MEASURED,
+                f"retained {retained} of {observed}; output completeness remains UNKNOWN",
+                "CPP-19",
+            )
+        if not (exact_loss and rule_recorded and loss_recorded):
+            return CheckResult(
+                name,
+                req,
+                INCONCLUSIVE,
+                f"retained {retained} of {observed}; exact_loss={exact_loss}, sampling_rule={rule_recorded}, loss_metadata={loss_recorded}",
+                "CPP-19 requires enough sampling/loss metadata to bound the retained evidence",
+            )
+        return CheckResult(
+            name,
+            req,
+            NARROWING,
+            f"retained {retained} of {observed}, recorded {dropped} dropped events, and bounded the output to the retained population",
+            "CPP-19 structured sampling and loss account",
+        )
+
+    if valid_count(dropped) and dropped != 0:
+        return CheckResult(
+            name,
+            req,
+            VIOLATION,
+            f"observed and retained populations are both {observed}, but dropped_population is {dropped}",
+            "CPP-19 population conservation",
+        )
+    if claim == "UNKNOWN":
+        return CheckResult(name, req, NOT_MEASURED, "population is conserved but completeness is UNKNOWN", "CPP-19")
+    return CheckResult(
+        name,
+        req,
+        PRESERVING,
+        f"all {observed} observed events were retained and output completeness is {claim}",
+        "CPP-19 population conservation",
+    )
+
+
 def check_evidence_resolvability(fx: Fixture) -> CheckResult:
     name, req = "evidence_resolvability", ["CPP-7"]
     items = _evidence_items(fx.input.get("evidence"))
@@ -916,6 +1135,8 @@ CHECKS: tuple[Callable[[Fixture], CheckResult], ...] = (
     check_perturbation_disclosure,
     check_uninstrumented_generalization,
     check_evaluation_awareness,
+    check_observation_intervention,
+    check_sampling_accounting,
     check_evidence_resolvability,
 )
 

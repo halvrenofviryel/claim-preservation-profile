@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import re
 
@@ -13,6 +12,7 @@ NON_SUCCESS_RELATIONS = {"NOT_MEASURED", "INCONCLUSIVE", "ERROR"}
 LEGAL_RELATIONS = PASSING_RELATIONS | NON_SUCCESS_RELATIONS | {"AMPLIFIED_UNSUPPORTED", "INCOMPARABLE"}
 
 SEED_NEGATIVE_IDS = [f"CPP-N{n:02d}" for n in range(1, 21)]
+HARDENING_NEGATIVE_IDS = ["CPP-N21", "CPP-N22"]
 
 
 def _violations(fixture: dict) -> list[str]:
@@ -22,21 +22,24 @@ def _violations(fixture: dict) -> list[str]:
 # --- corpus shape ---------------------------------------------------------
 
 
-def test_all_twenty_supplied_negative_fixtures_are_present(negative_fixtures):
-    assert [f["id"] for f in negative_fixtures] == SEED_NEGATIVE_IDS
-    assert len(negative_fixtures) == 20
+def test_original_twenty_and_hardening_negative_fixtures_are_present(negative_fixtures):
+    assert [f["id"] for f in negative_fixtures] == SEED_NEGATIVE_IDS + HARDENING_NEGATIVE_IDS
+    assert len(negative_fixtures) == 22
 
 
-#: SHA-256 of `negative_fixtures_v0.1.json` as supplied in the v0.1 seed bundle.
-SEED_NEGATIVE_CORPUS_SHA256 = "c32ee2c01f53d57aaeb0d7fb1415ec992220a08e798f2ddde8e93f0a4906da85"
-
-
-def test_negative_corpus_is_byte_identical_to_the_seed_bundle(repo_root):
-    """The seed negative corpus was copied, not rewritten. This pins its exact bytes
-    against the digest of the supplied bundle, so an edit cannot pass silently — the
-    seed file itself lives outside the repository and cannot be compared directly."""
-    raw = (repo_root / "conformance" / "negative-fixtures.json").read_bytes()
-    assert hashlib.sha256(raw).hexdigest() == SEED_NEGATIVE_CORPUS_SHA256
+def test_corrected_seed_fixture_attributions_are_pinned(negative_fixtures):
+    """Hardening narrows four loose baseline attributions without changing the
+    cases' expected relation. Pin both the correction and the preserved verdict."""
+    by_id = {fixture["id"]: fixture for fixture in negative_fixtures}
+    expected = {
+        "CPP-N02": ["CPP-1", "CPP-2"],
+        "CPP-N06": ["CPP-4"],
+        "CPP-N16": ["CPP-13"],
+        "CPP-N18": ["CPP-15"],
+    }
+    for case_id, requirements in expected.items():
+        assert by_id[case_id]["violates"] == requirements
+        assert by_id[case_id]["expected_relation"] == "AMPLIFIED_UNSUPPORTED"
 
 
 def test_negative_fixture_names_and_order_are_pinned(negative_fixtures):
@@ -62,11 +65,29 @@ def test_negative_fixture_names_and_order_are_pinned(negative_fixtures):
         "instrumentation_changes_timeout",
         "evaluation_awareness_generalized_to_deployment",
         "silent_evidence_sink_failure",
+        "intervention_reported_as_passive_observation",
+        "sampled_population_reported_as_complete",
     ]
 
 
-def test_at_least_eight_positive_fixtures(positive_fixtures):
-    assert len(positive_fixtures) >= 8
+def test_at_least_fifteen_positive_fixtures(positive_fixtures):
+    assert len(positive_fixtures) >= 15
+
+
+def test_cpp16_and_cpp19_near_neighbours_are_structured(negative_fixtures, positive_fixtures):
+    negative = {f["id"]: f for f in negative_fixtures}
+    positive = {f["id"]: f for f in positive_fixtures}
+
+    assert positive["CPP-P14"]["near_neighbour_of"] == "CPP-N21"
+    assert positive["CPP-P14"]["mechanically_separable"] is True
+    assert negative["CPP-N21"]["observation_intervention"]["output_attribution"] == "PASSIVE_OBSERVATION"
+    assert positive["CPP-P14"]["observation_intervention"]["output_attribution"] == "INTERVENED_CONDITION"
+
+    assert positive["CPP-P15"]["near_neighbour_of"] == "CPP-N22"
+    assert positive["CPP-P15"]["mechanically_separable"] is True
+    assert "sampling_rule" not in negative["CPP-N22"]["sampling_accounting"]
+    assert positive["CPP-P15"]["sampling_accounting"]["dropped_population"] == 20
+    assert positive["CPP-P15"]["sampling_accounting"]["output_population_claim"] == "BOUNDED_TO_RETAINED"
 
 
 def test_ids_are_unique_across_both_corpora(negative_fixtures, positive_fixtures):

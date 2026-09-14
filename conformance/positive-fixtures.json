@@ -526,5 +526,92 @@
     "observer": { "evaluation_ran": true, "evidence_sink_write": "FAILED" },
     "expected_relation": "NARROWER",
     "notes": "A measurement failure is a measurement failure even when the thing being measured looked fine in memory. The output is weaker than the input, which is the correct direction."
+  },
+  {
+    "id": "CPP-P14",
+    "name": "intervention_explicitly_attributed",
+    "description": "The observer changes policy and execution permissions, then attributes the resulting completion to that intervened condition rather than to passive observation.",
+    "near_neighbour_of": "CPP-N21",
+    "load_bearing_difference": "The output attribution is INTERVENED_CONDITION and the claim names policy P1; CPP-N21 labels the same post-intervention outcome PASSIVE_OBSERVATION under P0.",
+    "mechanically_separable": true,
+    "input": {
+      "claim": "Before observation, policy P0 denied operation A.",
+      "status": "MEASURED",
+      "qualifiers": ["condition=pre-intervention"],
+      "non_claims": ["Does not establish behaviour after policy or permission changes."],
+      "assurance": "INDEPENDENT_OBSERVER",
+      "basis": "observer@sha256:16c0de"
+    },
+    "transformation": {
+      "kind": "observe-and-control",
+      "description": "The observer replaces P0 with P1 and grants execution permission before recording the result.",
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "After the observer installed policy P1 and granted permission, operation A completed under that intervened condition.",
+      "status": "MEASURED",
+      "qualifiers": ["condition=pre-intervention", "condition=post-intervention", "policy=P1"],
+      "non_claims": [
+        "Does not establish behaviour after policy or permission changes.",
+        "Does not establish that operation A would complete under policy P0 or without the observer intervention."
+      ],
+      "assurance": "INDEPENDENT_OBSERVER",
+      "basis": "observer@sha256:16c0de"
+    },
+    "added_evidence": [],
+    "observation_intervention": {
+      "observer_role": "INTERVENING",
+      "pre_intervention": { "policy": "P0", "execution_permission": "DENY" },
+      "intervention": {
+        "applied": true,
+        "changes": ["policy", "execution_permissions"],
+        "description": "Replaced P0 with P1 and changed execution permission from DENY to ALLOW."
+      },
+      "post_intervention": { "policy": "P1", "execution_permission": "ALLOW", "operation": "COMPLETED" },
+      "output_attribution": "INTERVENED_CONDITION"
+    },
+    "expected_relation": "EQUIVALENT"
+  },
+  {
+    "id": "CPP-P15",
+    "name": "sampled_population_bounded_and_accounted",
+    "description": "The pipeline retains 80 of 100 observed events, records the deterministic sampling rule and the 20-event loss, and bounds the output to the retained population.",
+    "near_neighbour_of": "CPP-N22",
+    "load_bearing_difference": "The output is BOUNDED_TO_RETAINED and records the exact dropped count, sampling rule, and loss metadata; CPP-N22 calls the retained 80 events COMPLETE and omits those records.",
+    "mechanically_separable": true,
+    "input": {
+      "claim": "One hundred events entered the evidence pipeline.",
+      "status": "MEASURED",
+      "qualifiers": ["observed_population=100"],
+      "non_claims": ["Does not establish that every observed event was retained."],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "collector@sha256:19acc0"
+    },
+    "transformation": {
+      "kind": "sample",
+      "description": "Deterministically retain four of every five events and record the sampling/loss account.",
+      "preserves_distinctions": true
+    },
+    "output": {
+      "claim": "Among the 80 retained events, the reported distribution applies only to that sampled subset.",
+      "status": "MEASURED",
+      "qualifiers": ["observed_population=100", "retained_population=80", "sampling_rule=retain four of every five"],
+      "non_claims": [
+        "Does not establish that every observed event was retained.",
+        "Does not establish the distribution of the 20 dropped events or of the complete observed population."
+      ],
+      "assurance": "SAME_PROCESS_CHECKED",
+      "basis": "collector@sha256:19acc0"
+    },
+    "added_evidence": [],
+    "sampling_accounting": {
+      "observed_population": 100,
+      "retained_population": 80,
+      "dropped_population": 20,
+      "sampling_rule": "retain four of every five events",
+      "loss_metadata": { "cause": "deterministic_sampling", "queue_overflow": 0 },
+      "output_population_claim": "BOUNDED_TO_RETAINED"
+    },
+    "expected_relation": "NARROWER"
   }
 ]

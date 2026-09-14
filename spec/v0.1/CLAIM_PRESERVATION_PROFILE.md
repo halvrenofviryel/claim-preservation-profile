@@ -241,13 +241,29 @@ CPP does not claim:
 
 ## 12. Relationship to Phionyx work
 
-CPP generalizes four previously separate Phionyx ideas into one downstream evidence discipline:
+CPP draws on four bodies of prior Phionyx work and proposes a separate downstream
+evidence discipline:
 
-- AIREP: explicit claim scope and `does_not_cover`;
-- Measurement Axioms: non-execution/uncertainty/error must not collapse into positive assurance;
-- CDE-12: what a reader can establish from a bounded record set;
-- draft-abak / control-delivery work: structural result, claim support, and intermediary semantic preservation remain separate.
+- **AIREP v0.1 and v0.2:** both carry explicit scope and `does_not_cover`;
+  v0.1 defines evidence-reference resolvability and states that integrity protects
+  the record rather than proving the recorded claim; v0.2 adds stage-specific
+  artifact families and cross-artifact references. CPP is not an AIREP profile.
+- **Measurement Axioms v1.0:** its verdict algebra keeps `NOT_MEASURED`,
+  `INCONCLUSIVE`, and `ERROR` distinct from positive measurement outcomes, and its
+  decision record separates measurement, decision, execution, enforcement, and
+  evidence states. The frozen v1.0 text does not define CPP's observer-validity or
+  probe-effect model.
+- **CDE-12 v0.2:** a record-focused measurement instrument that bounds what a
+  reader can establish, grades the evidence tier supporting each result, separates
+  `not tested` from `not demonstrated`, and distinguishes delivery,
+  enforcement, effect, authority, and bounded negative records in C8–C12.
+- **draft-abak-01:** the published individual Internet-Draft proposes separate
+  structural aggregate and claim-support results, scope/non-claim qualification,
+  delivery/effect separation, and semantic preservation across intermediaries.
 
 CPP is proposed here as a separate experimental profile. It should not retroactively change those specifications without their own versioned processes.
 
-CPP is not an AIREP profile at this stage and does not alter AIREP conformance. CPP does not modify Measurement Axioms v1.0 or CDE-12. Reference to draft-abak is descriptive only: CPP is not IETF work and implies no IETF review, adoption, or endorsement.
+CPP does not alter AIREP conformance and does not modify Measurement Axioms v1.0
+or CDE-12. Reference to draft-abak is descriptive only: CPP is not IETF work, and
+the cited draft is an individual Informational Internet-Draft, not evidence of IETF
+or working-group review, adoption, consensus, or endorsement.

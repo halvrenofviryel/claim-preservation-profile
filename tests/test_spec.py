@@ -9,6 +9,7 @@ from __future__ import annotations
 import re
 
 import pytest
+import yaml
 
 RELATIONS = [
     "EQUIVALENT",
@@ -113,9 +114,12 @@ def test_spec_declares_experimental_author_proposal_status(spec_text):
 
 
 def test_spec_does_not_claim_adoption_or_ownership_of_neighbouring_work(spec_text):
-    assert "CPP is not an AIREP profile at this stage and does not alter AIREP conformance." in spec_text
-    assert "does not modify Measurement Axioms v1.0 or CDE-12" in spec_text
-    assert "implies no IETF review, adoption, or endorsement" in spec_text
+    assert "CPP is not an AIREP profile." in spec_text
+    assert "CPP does not alter AIREP conformance" in spec_text
+    assert "does not modify Measurement Axioms v1.0" in spec_text
+    assert "or CDE-12" in spec_text
+    assert "not evidence of IETF" in spec_text
+    assert "working-group review, adoption, consensus, or endorsement" in spec_text
     forbidden = [
         "industry standard",
         "adopted standard",
@@ -143,3 +147,21 @@ def test_status_file_states_the_required_facts(repo_root):
         assert line in status, f"STATUS.md is missing {line!r}"
     assert "author-created research artifacts" in status
     assert "not independent empirical validation" in status
+
+
+def test_citation_metadata_parses_and_pins_verified_identifiers(repo_root):
+    citation = yaml.safe_load((repo_root / "CITATION.cff").read_text(encoding="utf-8"))
+    assert "date-released" not in citation, "the unreleased CPP candidate must not claim a release date"
+    assert citation["authors"] == [
+        {
+            "family-names": "Abak",
+            "given-names": "Ali Toygar",
+            "affiliation": "Phionyx",
+            "orcid": "https://orcid.org/0009-0002-3718-4010",
+        }
+    ]
+    paper = citation["references"][0]
+    assert paper["url"] == "https://huggingface.co/blog/phionyx/access-is-not-yet-verifiability"
+    assert paper["date-published"] == "2026-09-13"
+    assert paper["doi"] == "10.5281/zenodo.22754297"
+    assert paper["authors"][0]["orcid"] == "https://orcid.org/0009-0002-3718-4010"

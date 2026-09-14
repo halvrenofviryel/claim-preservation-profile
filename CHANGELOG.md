@@ -6,6 +6,46 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) loos
 Versions refer to the Claim Preservation Profile itself, which is EXPERIMENTAL: no
 compatibility guarantee applies across 0.x versions.
 
+## Unreleased — public-candidate hardening — 2026-09-14
+
+### Added
+
+- Pinned-source cross-project audit for AIREP/CDE-12, Measurement Axioms, and the
+  published draft-abak-01 text.
+- Structured CPP-16 fixtures `CPP-N21`/`CPP-P14` and a validator rule separating
+  passive observation from observer intervention.
+- Structured CPP-19 fixtures `CPP-N22`/`CPP-P15` and a validator rule separating a
+  complete-population claim from explicitly bounded sampling/loss accounting.
+- Regression and mutation tests for the two new rules, source pins, attribution
+  corrections, CFF parsing, and fail-closed handling of missing structured facts;
+  the suite now contains 104 tests.
+- Verified author ORCID and the public position-paper URL, publication date, and DOI
+  in `CITATION.cff`.
+
+### Changed
+
+- Narrowed cross-project language to the exact versioned statements supported by
+  the audited sources and made the individual Internet-Draft status explicit.
+- Removed CPP's top-level `date-released` CFF field so the public candidate is not
+  misrepresented as a release; the separately published position paper keeps its
+  verified `date-published` value.
+- Updated corpus/status documentation from 20 negative/13 positive fixtures to 22
+  negative/15 positive fixtures. CPP-16 and CPP-19 are no longer described as
+  unexercised.
+
+### Fixed
+
+- Removed loose requirement attributions while preserving each fixture's
+  `AMPLIFIED_UNSUPPORTED` expected relation: CPP-N02 no longer cites CPP-13;
+  CPP-N06 no longer cites CPP-20; CPP-N16 no longer cites CPP-6; CPP-N18 no longer
+  cites CPP-20.
+
+No tag, GitHub Release, new repository version, or DOI for CPP is created by this
+hardening work.
+
+The entry below records the repository state at the preserved initial commit; it is
+retained as history rather than rewritten to describe this hardening branch.
+
 ## 0.1.0 — 2026-09-14
 
 Initial experimental profile. Local candidate; not released, not published, not

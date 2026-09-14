@@ -29,13 +29,13 @@ protect.
 
 ## The fixture corpus
 
-The conformance fixtures in this repository — the twenty negative cases supplied
-with the v0.1 seed bundle and the thirteen positive controls added here — are
-**author-created research artifacts**. They were written to exercise the profile's
-own requirements, and they do not exercise all of them: **CPP-16** and **CPP-19**
-have no fixture and no validator check, so nothing in this repository demonstrates
-them. Six of the twenty negative cases state their failure only in prose and are
-reported by the reference validator as not mechanically decidable.
+The conformance fixtures in this repository — twenty original negative cases, two
+hardening negatives, and fifteen positive controls — are **author-created research artifacts**.
+CPP-16 and CPP-19 now each have a structured negative/positive
+near-neighbour pair and a validator check that mechanically separates the pair.
+That establishes internal corpus/rule consistency only. Six of the twenty-two
+negative cases state their failure only in prose and are reported by the reference
+validator as not mechanically decidable.
 
 They are **not independent empirical validation**. They are not drawn from observed
 production incidents, not sampled from a third-party corpus, and not reviewed by
@@ -47,7 +47,7 @@ internal consistency between the corpus and the rules, and nothing more.
 The validator's process exit code reports **run validity** — whether the run was
 performed and whether the corpus is structurally well formed. It does not report
 whether claims were preserved. Claim-preservation verdicts are in the report body.
-A zero exit on a corpus containing twenty non-preserving cases is the expected
+A zero exit on a corpus containing twenty-two non-preserving cases is the expected
 result, and is the point.
 
 ## Relationship to other Phionyx work
