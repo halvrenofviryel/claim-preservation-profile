@@ -1,0 +1,34 @@
+{
+  "profile_version": "0.1",
+  "recorded_at": "2026-11-22T00:00:00Z",
+  "claim": {
+    "id": "deterministic-compatibility-mean",
+    "text": "The admitted exact-match mean is at least 0.75 on the four-case deterministic compatibility population."
+  },
+  "subject": {
+    "id": "deterministic-compatibility-subject",
+    "revision": "claim-commons-local/synthetic-echo-v1"
+  },
+  "evaluation_contract": {
+    "id": "deterministic-compatibility-contract",
+    "revision": "1",
+    "criterion": {
+      "operator": "gte",
+      "threshold": 0.75
+    }
+  },
+  "selector": {
+    "score_name": "exact",
+    "metric_name": "mean",
+    "aggregate": "mean_score",
+    "unit": "ratio"
+  },
+  "scope": {
+    "supports": [
+      "A deterministic format-compatibility comparison for the declared four-case synthetic population."
+    ],
+    "does_not_support": [
+      "Model quality, semantic equivalence between tools, safety, production fitness, source independence, or external reproduction."
+    ]
+  }
+}

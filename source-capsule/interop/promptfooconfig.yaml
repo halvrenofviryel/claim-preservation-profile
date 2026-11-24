@@ -1,0 +1,14 @@
+description: CPP Source Capsule deterministic format-compatibility probe
+providers:
+  - echo
+prompts:
+  - "{{value}}"
+tests:
+  - vars: {value: alpha}
+    assert: [{type: equals, value: alpha}]
+  - vars: {value: beta}
+    assert: [{type: equals, value: beta}]
+  - vars: {value: gamma}
+    assert: [{type: equals, value: gamma}]
+  - vars: {value: delta}
+    assert: [{type: equals, value: not-delta}]

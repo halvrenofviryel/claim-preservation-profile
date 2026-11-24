@@ -29,7 +29,13 @@ research/**
 conformance/validate.py
 tests/**
 .github/workflows/**
+source-capsule/**
 ```
+
+`source-capsule/**` is an explicit exception to the CC BY 4.0 documentation and
+fixture default above. Its documentation, schemas, fixtures and generated reports
+retain the Apache-2.0 license of the migrated source project. See
+`source-capsule/LICENSE_SCOPE.md`.
 
 The full Apache-2.0 text is in [`LICENSE-CODE`](LICENSE-CODE). SPDX expression for
 the repository as a whole: `CC-BY-4.0 AND Apache-2.0`.

@@ -1,7 +1,8 @@
 name: verify
 
-# Not pushed anywhere as of v0.1. This workflow is part of the local candidate and
-# describes how the repository verifies itself.
+# Added by the unreleased consolidation candidate. A successful run verifies only
+# the checks named below; it does not establish CPP conformance, OAAC integration,
+# independent reproduction, or external validation.
 on:
   push:
     branches: [main]
@@ -40,6 +41,24 @@ jobs:
 
       - name: Run the test suite
         run: python -m pytest tests -q
+
+      - name: Install the source-capsule module
+        run: python -m pip install -e ./source-capsule
+
+      - name: Run source-capsule controls
+        run: python -m unittest discover -s source-capsule/tests -v
+
+      - name: Exercise the source-capsule CLI
+        run: |
+          cpp-source-capsule import \
+            --format inspect-ai-v2 \
+            --profile source-capsule/fixtures/profiles/document-triage.json \
+            --source source-capsule/fixtures/inspect/complete.json \
+            --out /tmp/cpp-source-capsule.json
+          cpp-source-capsule verify \
+            --capsule /tmp/cpp-source-capsule.json \
+            --source source-capsule/fixtures/inspect/complete.json \
+            --current-subject-revision model-a
 
       - name: Upload the validator report
         if: always()

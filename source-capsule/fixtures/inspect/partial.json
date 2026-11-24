@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "status": "success",
+  "eval": {
+    "task": "synthetic_document_triage",
+    "model": "model-a"
+  },
+  "results": {
+    "total_samples": 4,
+    "completed_samples": 3,
+    "scores": [
+      {
+        "name": "accuracy",
+        "scored_samples": 3,
+        "unscored_samples": 1,
+        "metrics": {
+          "accuracy": {
+            "name": "accuracy",
+            "value": 1.0
+          }
+        }
+      }
+    ]
+  }
+}

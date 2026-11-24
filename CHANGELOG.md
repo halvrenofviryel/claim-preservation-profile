@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Consolidate the useful source-admission work from the earlier Claim Commons
+  prototype as the `source-capsule/` CPP module.
+- Preserve exact source provenance and frozen experiment identifiers while
+  retiring Claim Commons as a separate maintained claim product.
+- Define OAAC as a separate consumer workflow that does not own a second claim
+  schema or CPP validator.
+
 All notable changes to this repository are recorded here. Dates are UTC.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) loosely.
