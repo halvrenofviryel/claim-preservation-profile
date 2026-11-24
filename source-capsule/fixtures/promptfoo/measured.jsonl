@@ -1,0 +1,4 @@
+{"prompt":"synthetic-1","success":true,"score":1.0,"gradingResult":{"pass":true,"score":1.0,"reason":"Synthetic fixture result"}}
+{"prompt":"synthetic-2","success":true,"score":1.0,"gradingResult":{"pass":true,"score":1.0,"reason":"Synthetic fixture result"}}
+{"prompt":"synthetic-3","success":true,"score":1.0,"gradingResult":{"pass":true,"score":1.0,"reason":"Synthetic fixture result"}}
+{"prompt":"synthetic-4","success":false,"score":0.0,"error":"Expected output to satisfy the assertion","gradingResult":{"pass":false,"score":0.0,"reason":"Synthetic fixture result"}}

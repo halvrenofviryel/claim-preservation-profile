@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cpp-source-capsule"
+version = "0.1.0a4"
+description = "CPP module for source-bound AI evaluation claim capsules"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Ali Toygar Abak" }]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+]
+
+[project.scripts]
+cpp-source-capsule = "cpp_source_capsule.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

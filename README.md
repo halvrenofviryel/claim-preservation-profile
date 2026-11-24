@@ -73,6 +73,8 @@ downstream transformation — which is what this profile proposes.
 | [`tests/`](tests) | Conformance tests, including mutation tests over load-bearing validator rules. |
 | [`research/PRIOR_ART_AND_SCOPE.md`](research/PRIOR_ART_AND_SCOPE.md) | What CPP does not claim to invent, and the bounded contribution it does claim. |
 | [`research/CROSS_PROJECT_CONSISTENCY_AUDIT.md`](research/CROSS_PROJECT_CONSISTENCY_AUDIT.md) | Pinned-source audit of every CPP characterization of AIREP, Measurement Axioms, CDE-12, and draft-abak. |
+| [`source-capsule/`](source-capsule/) | Unreleased source-capsule module: exact-source binding, narrow Inspect AI/Promptfoo adapters, mapping-loss records, deterministic rederivation, fixtures and 32 controls. This incorporates the useful work from the earlier Claim Commons prototype; it is not a second claim product. |
+| [`research/REPOSITORY_CONSOLIDATION.md`](research/REPOSITORY_CONSOLIDATION.md) | Ownership boundary for the single claim repository and its relationship to OAAC and AIREP. |
 
 ## A worked example of unsupported amplification
 
@@ -187,6 +189,10 @@ Evidence Contract for AI Assurance* is the conceptual motivation for this work. 
 is a position paper, not normative specification text; where the two differ, the
 profile in `spec/v0.1/` governs this repository.
 
+**OAAC** is a separate public-interest workflow candidate. It may consume CPP
+records for evidence review, contestation and revision-aware rechecks, but it does
+not own a second claim schema, claim-preservation profile or CPP validator.
+
 ## Status and explicit non-claims
 
 CPP v0.1 is an **experimental author proposal**. [STATUS.md](STATUS.md) carries the
@@ -233,6 +239,10 @@ python3 conformance/validate.py
 
 # 4. test suite
 python3 -m pytest tests -q
+
+# 5. unreleased source-capsule module
+python3 -m pip install -e ./source-capsule
+python3 -m unittest discover -s source-capsule/tests -v
 ```
 
 The validator's exit code reports **run validity and corpus validity only**:
