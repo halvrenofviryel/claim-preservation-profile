@@ -16,3 +16,11 @@ records to support a public-interest workflow for asking assurance questions,
 running or importing tests, reviewing evidence, recording contestation,
 rechecking revisions and making human decisions. OAAC does not define a second
 claim schema or validator. AIREP remains a separate runtime evidence protocol.
+
+## Status dimensions
+
+The CPP v0.1.0 profile release, the unreleased source-capsule candidate, and a
+future OAAC integration have separate status. The module's local controls do not
+make OAAC implemented, and neither status establishes independent reproduction or
+external validation. The requirement-level gap inventory is maintained in
+[`source-capsule/docs/CPP_MAPPING.md`](../source-capsule/docs/CPP_MAPPING.md).

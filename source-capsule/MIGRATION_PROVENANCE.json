@@ -24,7 +24,7 @@
     {
       "byte_preserved": false,
       "destination_path": "source-capsule/README.md",
-      "destination_sha256": "97fca6d54fa2299094c59ee29134d8f651dad6c2e2e1946e42499f0434f44c83",
+      "destination_sha256": "b99fd4ab5296709cc2066ebc508236199fe4033ab97c110eafc655d215d6457f",
       "source_bytes": 7393,
       "source_path": "README.md",
       "source_sha256": "9800ab85c6e37c121e8c2ebe64dd0fde235056ea5e353e4630d0131b3aacfd1e"
@@ -144,7 +144,7 @@
     {
       "byte_preserved": false,
       "destination_path": "source-capsule/docs/STATUS.md",
-      "destination_sha256": "cd16879e8c9206eb94405459d1e510fa64a1fcfb601dc38d3cd7ae31e1c3b3a8",
+      "destination_sha256": "4781804a9fb073fe1ae682921695412367a5a93adea13cc00f068484ec2aea71",
       "source_bytes": 4707,
       "source_path": "docs/STATUS.md",
       "source_sha256": "fd4e1ffd194d668f1e8dc0616e8042f635d484fdb967d5c66464a469b687dbd0"

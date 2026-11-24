@@ -1,7 +1,8 @@
 name: verify
 
-# Not pushed anywhere as of v0.1. This workflow is part of the local candidate and
-# describes how the repository verifies itself.
+# Added by the unreleased consolidation candidate. A successful run verifies only
+# the checks named below; it does not establish CPP conformance, OAAC integration,
+# independent reproduction, or external validation.
 on:
   push:
     branches: [main]

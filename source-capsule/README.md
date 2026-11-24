@@ -8,7 +8,7 @@ This CPP module tests one narrow alternative: a deterministic **claim capsule**
 that keeps these states visible across two source formats. It is maintained in
 the CPP repository rather than as a second claim product.
 
-## What works in this release
+## What works in this unreleased candidate
 
 - A small, implementation-neutral claim-capsule schema.
 - A narrow importer for selected Inspect AI evaluation-log v2 result fields.
@@ -20,7 +20,7 @@ the CPP repository rather than as a second claim product.
 - An explicit per-case agent-claim mode for two host-owned observation contracts: `stop_applied` and `message_sent`. It derives findings from structured observations rather than model prose, framework badges, or error-message text.
 - Thirty-two automated controls, including rehashed fabricated-measurement, fabricated-binding, and fabricated-mapping attacks; unknown current revision; unsupported adapter version; scored-population mismatch; contradictory completeness; selector validation; Promptfoo failed-assertion versus processing-error cases; duplicate case selection; and missing-observer preservation.
 
-## What this release does not establish
+## What this candidate does not establish
 
 This is a first-party research prototype. In addition to the numeric compatibility probe, the adapters were exercised locally against three deterministic agent-claim cases produced by Inspect AI `0.3.291` and Promptfoo `0.126.0`; the inputs and reproduction steps are in [`interop/`](interop/README.md). Two cases contain counter-evidence to an agent statement. The third has no selected effect observation. The public fixtures are allowlisted projections of actual tool outputs; raw framework logs are not committed because they can contain environment metadata. This was a same-author synthetic compatibility probe, not independent reproduction or evidence about model quality. There are no external users, independent implementations, production deployments, signatures, transparency receipts, or general semantic-truth checks.
 
