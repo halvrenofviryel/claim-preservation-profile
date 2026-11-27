@@ -1,6 +1,6 @@
 # claim-preservation-profile — engineering architecture
 
-Private consolidation inspection: 27 November 2026. Existing normative and
+Source consolidation inspection: 27 November 2026. Existing normative and
 historical documents retain their versions; this is a current developer map.
 
 Experimental CPP v0.1 specification/corpus and bounded structured claim-relation validator. Author proposal, not an adopted standard or general semantic oracle.

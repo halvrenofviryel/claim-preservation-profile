@@ -34,7 +34,7 @@ engineering metadata adds common workflow; it does not override normative tests.
 Release only an explicit reviewed source/package allowlist with dependency and
 license inventory, changelog, evidence and applicable migration/rollback procedure.
 Exclude credentials, customer data, model weights and entire research archives.
-Private Git mirroring is not publication, deployment or commercial acceptance.
+The established public GitHub repository remains canonical. Review source changes for its existing audience; source versioning does not imply deployment or commercial acceptance.
 On this mounted filesystem use the workspace's exact-path Git trust configuration;
 never configure wildcard safe.directory or borrow mutable Git object stores.
 
