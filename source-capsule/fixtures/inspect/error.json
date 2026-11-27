@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "status": "error",
+  "eval": {
+    "task": "synthetic_document_triage",
+    "model": "model-a"
+  },
+  "error": "Synthetic fixture error"
+}

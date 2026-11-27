@@ -1,0 +1,34 @@
+{
+  "profile_version": "0.1",
+  "recorded_at": "2026-11-22T00:00:00Z",
+  "claim": {
+    "id": "document-triage-accuracy",
+    "text": "The declared document-triage accuracy is at least 0.75 on the admitted evaluation population."
+  },
+  "subject": {
+    "id": "synthetic-document-triage-system",
+    "revision": "model-a"
+  },
+  "evaluation_contract": {
+    "id": "document-triage-contract",
+    "revision": "1",
+    "criterion": {
+      "operator": "gte",
+      "threshold": 0.75
+    }
+  },
+  "selector": {
+    "score_name": "accuracy",
+    "metric_name": "accuracy",
+    "aggregate": "mean_score",
+    "unit": "ratio"
+  },
+  "scope": {
+    "supports": [
+      "A deterministic comparison between the selected numeric measurement and the declared threshold."
+    ],
+    "does_not_support": [
+      "General safety, production fitness, causal attribution, independent reproduction, or semantic truth."
+    ]
+  }
+}

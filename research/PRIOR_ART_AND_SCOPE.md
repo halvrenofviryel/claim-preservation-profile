@@ -130,12 +130,18 @@ assurance pipeline; what a transformed claim may assert relative to its input an
 any added evidence; how non-success and unknown states must survive; how observer
 and probe effects constrain what a measurement can support.
 
-**Out of scope.** Whether the underlying AI system is safe, correct, aligned or
-compliant. Whether the original evidence is true. How evidence is produced, signed,
-stored or transported. What a given organisation should decide once a preserved
-claim reaches it. Natural-language semantic entailment in the general case — the
-reference validator explicitly does not attempt it, and reports `NOT_MEASURED` or
-`INCONCLUSIVE` rather than guessing.
+**Out of scope for the normative v0.1 profile.** Whether the underlying AI system
+is safe, correct, aligned or compliant. Whether the original evidence is true.
+How evidence is produced, signed, stored or transported. What a given organisation
+should decide once a preserved claim reaches it. Natural-language semantic
+entailment in the general case — the reference validator explicitly does not
+attempt it, and reports `NOT_MEASURED` or `INCONCLUSIVE` rather than guessing.
+
+The repository's unreleased [`source-capsule/`](../source-capsule/) module is a
+non-normative adapter experiment that produces source-bound inputs for later claim
+transformations. Its presence does not change the v0.1 normative scope, add new
+CPP requirements, or establish conformance between its capsule schema and the
+profile result schema. That mapping remains an explicit open integration task.
 
 **Relationship boundaries.** CPP v0.1 does not modify AIREP, Measurement Axioms
 v1.0, CDE-12, or the draft-abak IETF work area, is not a component or profile of any

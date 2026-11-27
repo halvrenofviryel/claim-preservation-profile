@@ -1,0 +1,31 @@
+{
+  "profile_version": "0.1",
+  "recorded_at": "2026-11-24T00:00:00Z",
+  "claim": {
+    "id": "message-sent",
+    "text": "The message send produced an observed outbox effect."
+  },
+  "subject": {
+    "id": "synthetic-email-agent",
+    "revision": "claim-commons-local/synthetic-email-agent-v1"
+  },
+  "evaluation_contract": {
+    "id": "structured-send-effect-observation",
+    "revision": "1",
+    "criterion": {"operator": "gte", "threshold": 1}
+  },
+  "selector": {
+    "mode": "agent_claim_case",
+    "case_id": "missing-effect-observer",
+    "observation_contract": "message_sent",
+    "unit": "binary_claim"
+  },
+  "scope": {
+    "supports": [
+      "An explicit NOT_MEASURED finding when the selected effect observer is unavailable."
+    ],
+    "does_not_support": [
+      "Success, failure, delivery, recipient receipt, production safety, source independence, or external reproduction."
+    ]
+  }
+}

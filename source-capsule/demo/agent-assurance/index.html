@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Agent Assurance — What Was Actually Verified?</title>
+  <meta name="description" content="A static, reproducible view of three claim-preservation cases across Inspect AI, Promptfoo, and CPP Source Capsule.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <p class="eyebrow">CPP Source Capsule · bounded research demonstrator</p>
+    <h1>What was actually verified?</h1>
+    <p class="lede">A green run, a failed assertion, and an unobserved effect are different results. This demo keeps the evidence finding, processing state, and revision applicability separate.</p>
+    <div class="limits" role="note">
+      <strong>Scope:</strong> three deterministic synthetic cases, two version-pinned export formats, same-author reproduction. This page does not run an agent and does not establish general safety or independent validation.
+    </div>
+  </header>
+
+  <main>
+    <section aria-labelledby="choose-heading">
+      <div class="section-heading">
+        <div>
+          <p class="step">Step 1</p>
+          <h2 id="choose-heading">Choose a scenario</h2>
+        </div>
+        <div class="revision-control">
+          <label for="revision">System revision</label>
+          <select id="revision">
+            <option value="recorded">Recorded v1</option>
+            <option value="changed">Changed v2</option>
+          </select>
+        </div>
+      </div>
+      <div id="scenario-list" class="scenario-grid" role="list"></div>
+    </section>
+
+    <section class="result" aria-live="polite" aria-labelledby="result-heading">
+      <div class="section-heading">
+        <div>
+          <p class="step">Step 2</p>
+          <h2 id="result-heading">Inspect the preserved result</h2>
+        </div>
+        <span id="case-badge" class="case-badge"></span>
+      </div>
+
+      <div class="claim-card">
+        <span>Selected claim</span>
+        <p id="claim-text"></p>
+      </div>
+
+      <div class="axis-grid">
+        <article class="axis-card">
+          <span>Evidence finding</span>
+          <strong id="finding"></strong>
+          <p id="finding-help"></p>
+        </article>
+        <article class="axis-card">
+          <span>Processing</span>
+          <div id="processing" class="processing-sources"></div>
+          <p>Each source keeps its own processing state; neither state is the evidence finding.</p>
+        </article>
+        <article class="axis-card">
+          <span>Applicability</span>
+          <strong id="applicability"></strong>
+          <p id="applicability-help"></p>
+        </article>
+      </div>
+
+      <div class="tool-grid">
+        <article>
+          <h3>Inspect AI source</h3>
+          <dl id="inspect-details"></dl>
+          <p class="source-limit">Mapping rederived means the adapter reproduced its selected fields from these source bytes. It does not validate the observation, claim, or system safety.</p>
+        </article>
+        <article>
+          <h3>Promptfoo source</h3>
+          <dl id="promptfoo-details"></dl>
+          <p class="source-limit">Mapping rederived means the adapter reproduced its selected fields from these source bytes. It does not validate the observation, claim, or system safety.</p>
+        </article>
+      </div>
+
+      <div class="interpretation">
+        <div>
+          <h3>What the source showed</h3>
+          <p id="source-summary"></p>
+        </div>
+        <div>
+          <h3>What must not be inferred</h3>
+          <p id="limit-summary"></p>
+        </div>
+      </div>
+
+      <div id="mapping-comparison" class="mapping-comparison" hidden>
+        <div class="comparison-heading">
+          <p class="step">Why the adapter change matters</p>
+          <h3>The earlier generic mapping could not answer this exact claim</h3>
+          <p>It did not prove a false real-world conclusion. It lacked the per-case observation contract needed to distinguish an unavailable observer from an observed counterexample.</p>
+        </div>
+        <div class="comparison-grid">
+          <article>
+            <span>Earlier generic capability</span>
+            <ul>
+              <li>Aggregate or scored-row selection</li>
+              <li>No <code>message_sent</code> observation contract</li>
+              <li>No claim-specific missing-observer finding</li>
+              <li>Promptfoo subject revision unavailable in the generic export path</li>
+            </ul>
+          </article>
+          <article>
+            <span>Candidate a4 mapping</span>
+            <ul>
+              <li>Exact case identifier</li>
+              <li>Observer availability plus before/after effect fields</li>
+              <li><code>NOT_MEASURED</code> kept apart from counter-evidence</li>
+              <li>Per-source processing and structured revision binding retained</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="reproduce" aria-labelledby="reproduce-heading">
+      <p class="step">Step 3</p>
+      <h2 id="reproduce-heading">Reproduce the bounded result</h2>
+      <p>The repository contains the deterministic tool inputs, normalized public fixtures, exact profiles, adapter code, regression tests, and report builder. Raw framework logs remain local until their environment metadata is reviewed; the normalized fixtures retain every field admitted by this experiment.</p>
+      <div class="review-paths">
+        <article>
+          <strong>Quick review</strong>
+          <p>Compare the committed fixture hashes and generated report without installing either evaluation tool.</p>
+        </article>
+        <article>
+          <strong>Full reproduction</strong>
+          <p>Run the pinned Inspect and Promptfoo versions, normalize their outputs, and compare the resulting bytes and findings.</p>
+        </article>
+      </div>
+      <div class="actions">
+        <a href="https://github.com/halvrenofviryel/claim-preservation-profile/tree/main/source-capsule">Open the source repository</a>
+        <a href="https://github.com/halvrenofviryel/claim-preservation-profile/tree/main/source-capsule/interop">Read the reproduction steps</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>CPP Source Capsule is an early research prototype and one technical component under exploration for the broader Open Agent Assurance Commons (OAAC) research direction. OAAC is not implemented by this repository. Inspect AI and Promptfoo are independent projects; no affiliation or endorsement is implied.</p>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>

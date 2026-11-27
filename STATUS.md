@@ -32,6 +32,17 @@ conformance_claims: none
 the absence of a measurement, which is the distinction the profile itself exists to
 protect.
 
+## Unreleased consolidation candidate
+
+The `source-capsule/` directory is an unreleased consolidation candidate. It
+incorporates the reviewed local 0.1.0a4 Claim Commons candidate under the single
+CPP repository boundary. Its exact source revision and per-file source hashes are
+recorded in `source-capsule/MIGRATION_PROVENANCE.json`.
+
+This candidate does not change the status of the published CPP v0.1.0 release and
+does not establish independent review, reproduction, deployment, upstream-tool
+compatibility beyond the pinned probes, or OAAC implementation.
+
 ## The fixture corpus
 
 The conformance fixtures in this repository — twenty original negative cases, two
