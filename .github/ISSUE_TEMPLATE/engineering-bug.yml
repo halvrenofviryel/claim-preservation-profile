@@ -1,0 +1,23 @@
+name: Engineering defect
+description: Reproducible behavior against an exact source/release revision
+title: "[Bug] "
+body:
+  - type: textarea
+    id: revision
+    attributes:
+      label: Product, revision and environment
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Expected behavior, observed behavior and minimal reproduction
+      description: Do not include credentials, private memory or customer data.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Test evidence, impact and acceptance condition
+    validations:
+      required: true

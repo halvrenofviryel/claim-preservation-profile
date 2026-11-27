@@ -21,3 +21,10 @@ report.json
 *.swp
 .idea/
 .vscode/
+
+# Phionyx local engineering artifacts
+/engineering-results/
+/.engineering-venv/
+__pycache__/
+.pytest_cache/
+*.pyc

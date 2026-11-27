@@ -1,0 +1,47 @@
+{
+  "schema": "phionyx.project-engineering.v1",
+  "project": "claim-preservation-profile",
+  "scope": "Existing structured corpus/reference-validator tests; no natural-language semantic guarantee",
+  "checks": {
+    "offline": [
+      {
+        "name": "bounded-existing-tests",
+        "argv": [
+          "{python}",
+          "-B",
+          "-m",
+          "pytest",
+          "tests",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "--junitxml={junit}",
+          "--basetemp={output}/pytest-tmp"
+        ],
+        "env": {
+          "PYTHONPATH": "{repo}/.:{repo}/conformance",
+          "PHIONYX_PROJECT_ROOT": "{output}/isolated-project",
+          "PHIONYX_ACTIVE_TRACE_FILE": "{output}/active-trace",
+          "PHIONYX_MCP_AUDIT_ROOT": "{output}/mcp-audit",
+          "PHIONYX_OPENAI_AGENTS_AUDIT_ROOT": "{output}/openai_agents-audit",
+          "PHIONYX_LANGCHAIN_AUDIT_ROOT": "{output}/langchain-audit",
+          "PHIONYX_LETTA_AUDIT_ROOT": "{output}/letta-audit"
+        },
+        "requires_junit": true,
+        "timeout_seconds": 180
+      }
+    ]
+  },
+  "documentation": [
+    "docs/engineering/ARCHITECTURE.md",
+    "docs/engineering/DEVELOPMENT.md"
+  ],
+  "required_dependencies": [
+    "pytest",
+    "jsonschema",
+    "PyYAML"
+  ],
+  "customer_release_ready": false,
+  "setup": "Python >=3.11; jsonschema >=4.20,<5, pytest/PyYAML dev. Missing jsonschema yields incomplete validation rather than silent success. Source PYTHONPATH includes conformance when importing validate.",
+  "status_notes": []
+}
